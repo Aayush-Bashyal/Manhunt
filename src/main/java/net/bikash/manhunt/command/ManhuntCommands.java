@@ -21,6 +21,7 @@ public class ManhuntCommands {
                 ()->Component.literal("Manhunt started!"),
                 false
         );
+
         return 1;
     })));
     }

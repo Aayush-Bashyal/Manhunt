@@ -1,5 +1,6 @@
 package net.bikash.manhunt;
 
+import net.bikash.manhunt.command.ManhuntCommands;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.resources.Identifier;
@@ -13,7 +14,7 @@ public class Manhunt implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-
+		ManhuntCommands.register();
 	}
 
 }
