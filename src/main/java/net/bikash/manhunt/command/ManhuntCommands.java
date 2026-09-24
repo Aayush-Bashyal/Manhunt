@@ -1,5 +1,6 @@
 package net.bikash.manhunt.command;
 import com.mojang.brigadier.CommandDispatcher;
+import net.bikash.manhunt.Manhunt;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -16,11 +17,21 @@ public class ManhuntCommands {
     }
     private static  void registerCommands(CommandDispatcher <CommandSourceStack> dispatcher)
     {
+
+
     dispatcher.register(Commands.literal("manhunt").then(Commands.literal("start").executes(context -> {
-        context.getSource().sendSuccess(
-                ()->Component.literal("Manhunt started!"),
-                false
-        );
+      if (Manhunt.Game.isRunning()){
+          context.getSource().sendSuccess(
+                  () -> Component.literal("Manhunt is Cruuently running"),
+          false
+          );
+      return 0 ;
+      }
+      Manhunt.Game.start();
+      context.getSource().sendSuccess(
+              ()-> Component.literal("Manhunt Started!"),
+              false
+      );
 
         return 1;
     })));
