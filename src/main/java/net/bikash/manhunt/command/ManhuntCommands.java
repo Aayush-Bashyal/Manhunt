@@ -1,0 +1,28 @@
+package net.bikash.manhunt.command;
+import com.mojang.brigadier.CommandDispatcher;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+public class ManhuntCommands {
+    public static void register() {
+
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+        {
+
+            registerCommands(dispatcher);
+        });
+    }
+    private static  void registerCommands(CommandDispatcher <CommandSourceStack> dispatcher)
+    {
+    dispatcher.register(Commands.literal("manhunt").then(Commands.literal("start").executes(context -> {
+        context.getSource().sendSuccess(
+                ()->Component.literal("Manhunt started!"),
+                false
+        );
+        return 1;
+    })));
+    }
+    }
+
