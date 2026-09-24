@@ -1,7 +1,10 @@
 package net.bikash.manhunt.game;
 
+import java.util.UUID;
+
 public class ManhuntGame {
     private boolean running = false;
+    private UUID runner;
     public boolean isRunning(){
         return running;
     }
@@ -11,5 +14,13 @@ public class ManhuntGame {
     public void stop(){
         running=false;
     }
+    public void setrunner(UUID runner){
+        this.runner = runner;
+
+    }
+    public UUID getRunner(){
+        return runner;
+    }
+
 
 }
