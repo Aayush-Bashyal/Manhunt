@@ -14,7 +14,7 @@ public class ManhuntGame {
     public void stop(){
         running=false;
     }
-    public void setrunner(UUID runner){
+    public void setRunner(UUID runner){
         this.runner = runner;
 
     }

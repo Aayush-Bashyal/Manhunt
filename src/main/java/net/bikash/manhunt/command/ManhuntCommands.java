@@ -4,7 +4,11 @@ import net.bikash.manhunt.Manhunt;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+
 public class ManhuntCommands {
     public static void register() {
 
@@ -68,7 +72,23 @@ public class ManhuntCommands {
                             }
                             return 1;
                         }
-                )));
+                )
+                                .then(Commands.literal("runner")
+                                        .then(Commands.argument("player", EntityArgument.player())
+                                                .executes(context -> {
+                                                            ServerPlayer player = EntityArgument.getPlayer(
+                                                                    context,"player"
+                                                            );
+                                                            Manhunt.Game.setRunner(player.getUUID());
+                                                            context.getSource().sendSuccess(
+                                                                    ()-> Component.literal(player.getName().getString() + "is the Speedrunner!"),
+                                                                    false
+                                                            );
+                                                            return 1;
+
+                                                        }
+                                                        )))
+                ));
     }
     }
 
