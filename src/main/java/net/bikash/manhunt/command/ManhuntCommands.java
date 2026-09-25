@@ -21,8 +21,10 @@ public class ManhuntCommands {
     private static  void registerCommands(CommandDispatcher <CommandSourceStack> dispatcher)
     {
 
-
+//like adding or registering the commands in minecraft when we type /manhunt ... the function executes as it is written in the code
         dispatcher.register(Commands.literal("manhunt")
+
+                // /manhunt start
                 .then(Commands.literal("start").executes(context -> {
                     if (Manhunt.Game.isRunning()) {
                         context.getSource().sendSuccess(
@@ -39,6 +41,8 @@ public class ManhuntCommands {
 
                     return 1;
                 }))
+
+                // /manhunt stop
                 .then(Commands.literal("stop").executes(context -> {
                             if (!Manhunt.Game.isRunning()) {
                                 context.getSource().sendSuccess(
@@ -55,6 +59,7 @@ public class ManhuntCommands {
                             return 1;
                         }
                 ))
+                // /manhunt status
                 .then(Commands.literal("status").executes(context -> {
                             if (Manhunt.Game.isRunning()) {
                                 long elapsed = Manhunt.Game.getElapsedTime();
@@ -77,7 +82,7 @@ public class ManhuntCommands {
                             return 1;
                         }))
 
-                                //runner
+                                // /manhunt runner <player>
                                 .then(Commands.literal("runner")
                                         .then(Commands.argument("player", EntityArgument.player())
                                                 .executes(context -> {
@@ -94,7 +99,7 @@ public class ManhuntCommands {
                                                         }
                                                 )))
 
-                                //hunterr
+                                // /manhunt hunter <player>
                                 .then(Commands.literal("hunter")
                                         .then(Commands.argument("player", EntityArgument.player())
                                                 .executes(context -> {
