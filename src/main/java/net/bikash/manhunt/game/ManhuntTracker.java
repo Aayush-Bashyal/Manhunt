@@ -66,10 +66,15 @@ public class ManhuntTracker {
                 double angle = Math.toDegrees(
                         Math.atan2(dz,dx)
                 );
+                double hunterYaw = hunter.getYRot();
+                angle = angle - hunterYaw;
 
                 if(angle<0){
                     angle+=360;
 
+                }
+                if(angle>=360){
+                    angle -=360;
                 }
                 runnerAngle = angle;
 

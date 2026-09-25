@@ -1,6 +1,229 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "manhunt:item/manhunt_compass"
-  }
+    "model":  {
+                  "entries":  [
+                                  {
+                                      "threshold":  0,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_00",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  1,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_01",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  2,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_02",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  3,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_03",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  4,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_04",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  5,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_05",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  6,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_06",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  7,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_07",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  8,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_08",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  9,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_09",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  10,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_10",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  11,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_11",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  12,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_12",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  13,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_13",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  14,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_14",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  15,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_15",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  16,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_16",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  17,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_17",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  18,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_18",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  19,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_19",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  20,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_20",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  21,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_21",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  22,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_22",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  23,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_23",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  24,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_24",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  25,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_25",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  26,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_26",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  27,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_27",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  28,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_28",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  29,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_29",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  },
+                                  {
+                                      "threshold":  30,
+                                      "model":  {
+                                                    "model":  "manhunt:item/compass_30",
+                                                    "type":  "minecraft:model"
+                                                }
+                                  }
+                              ],
+                  "property":  "minecraft:custom_model_data",
+                  "fallback":  {
+                                   "model":  "manhunt:item/compass_00",
+                                   "type":  "minecraft:model"
+                               },
+                  "type":  "minecraft:range_dispatch"
+              }
 }

@@ -41,7 +41,7 @@ public class ManhuntHUD {
             long seconds = totalseconds%60;
 
             String time = String.format(
-                    "⏲\uFE0F: %02d:%02d:%02d",
+                    "TIME: %02d:%02d:%02d",
                     hours,
                     minutes,
                     seconds);
@@ -64,7 +64,7 @@ public class ManhuntHUD {
             if(runner!=null) {
                 graphics.text(
                         minecraft.font,
-                        "\uD83C\uDFC3: " + runner.getName().getString(),
+                        "RUNNER: " + runner.getName().getString(),
                         10,
                         40,
                         0xFFFFFFFF,
@@ -77,7 +77,7 @@ public class ManhuntHUD {
 if (Manhunt.Game.isRunning()){
     graphics.text(
             minecraft.font,
-            "\uD83C\uDFF9:",
+            "HUNTER: ",
             10,
             55,
             0xFFFFFFFF,
@@ -105,37 +105,7 @@ if (Manhunt.Game.isRunning()){
 
 
 
-            double angle = ManhuntClientNetwork.getRunnerAngle();
 
-            String direction;
-
-            if (angle >= 337.5 || angle < 22.5) {
-                direction = "→";
-            } else if (angle < 67.5) {
-                direction = "↗";
-            } else if (angle < 112.5) {
-                direction = "↑";
-            } else if (angle < 157.5) {
-                direction = "↖";
-            } else if (angle < 202.5) {
-                direction = "←";
-            } else if (angle < 247.5) {
-                direction = "↙";
-            } else if (angle < 292.5) {
-                direction = "↓";
-            } else {
-                direction = "↘";
-            }
-
-            graphics.text(
-                    minecraft.font,
-                    "🧭 " + direction + " "
-                            + String.format("%.0f°", angle),
-                    10,
-                    y + 20,
-                    0xFFFFFFFF,
-                    true
-            );
         }
 }
     }
