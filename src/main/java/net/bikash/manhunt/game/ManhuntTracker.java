@@ -67,15 +67,10 @@ public class ManhuntTracker {
                         Math.atan2(dz,dx)
                 );
                 double hunterYaw = hunter.getYRot();
-                angle = angle - hunterYaw;
+                angle = angle - (hunterYaw-90);
+// converttt the worlds angleee to directionnn relativee to hunterrw
+               angle=angle-(hunterYaw-90);
 
-                if(angle<0){
-                    angle+=360;
-
-                }
-                if(angle>=360){
-                    angle -=360;
-                }
                 runnerAngle = angle;
 
 
