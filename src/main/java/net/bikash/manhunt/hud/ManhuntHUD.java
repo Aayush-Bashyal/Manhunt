@@ -53,30 +53,35 @@ public class ManhuntHUD {
 
             );
         }
+        if(Manhunt.Game.isRunning() ){
+
+
         if(Manhunt.Game.getRunner()!=null){
             ServerPlayer runner = minecraft.getSingleplayerServer().getPlayerList().getPlayer(Manhunt.Game.getRunner());
 
-            if(runner!=null){
+            if(runner!=null) {
                 graphics.text(
                         minecraft.font,
-                        "Runner: "+runner.getName().getString(),
+                        "Runner: " + runner.getName().getString(),
                         10,
                         40,
                         0xFFFFFFFF,
                         true
 
                 );
-
+            }
             }
         }
-        graphics.text(
-                minecraft.font,
-                "Hunters:",
-                10,
-                55,
-                0xFFFFFFFF,
-                true
-        );
+if (Manhunt.Game.isRunning()){
+    graphics.text(
+            minecraft.font,
+            "Hunters:",
+            10,
+            55,
+            0xFFFFFFFF,
+            true
+    );
+
         int y=70;
         for(UUID hunterUUID : Manhunt.Game.getHunters()){
             ServerPlayer hunter = minecraft.getSingleplayerServer().getPlayerList().getPlayer(hunterUUID);
@@ -92,7 +97,7 @@ public class ManhuntHUD {
                 );
                 y+=15;
             }
-        }
+        }}
     }
 
 }
