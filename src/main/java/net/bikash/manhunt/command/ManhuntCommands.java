@@ -7,6 +7,10 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+
+import java.util.UUID;
 
 public class ManhuntCommands {
     public static void register() {
@@ -38,9 +42,17 @@ public class ManhuntCommands {
                             () -> Component.literal("Manhunt Started!"),
                             false
                     );
-
+                    for(UUID hunterUUID: Manhunt.Game.getHunters()){
+                        ServerPlayer hunter = context.getSource().
+                                getServer().getPlayerList().getPlayer(hunterUUID);
+                        if(hunter!=null){
+                            hunter.getInventory().add(Items.COMPASS.getDefaultInstance());
+                        }
+                    }
                     return 1;
                 }))
+
+
 
                 // /manhunt stop
                 .then(Commands.literal("stop").executes(context -> {

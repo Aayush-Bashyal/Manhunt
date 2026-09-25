@@ -39,7 +39,7 @@ public class ManhuntHUD {
             long seconds = totalseconds%60;
 
             String time = String.format(
-                    "Time: %02d:%02d:%02d",
+                    "⏲\uFE0F: %02d:%02d:%02d",
                     hours,
                     minutes,
                     seconds);
@@ -62,7 +62,7 @@ public class ManhuntHUD {
             if(runner!=null) {
                 graphics.text(
                         minecraft.font,
-                        "Runner: " + runner.getName().getString(),
+                        "\uD83C\uDFC3: " + runner.getName().getString(),
                         10,
                         40,
                         0xFFFFFFFF,
@@ -75,7 +75,7 @@ public class ManhuntHUD {
 if (Manhunt.Game.isRunning()){
     graphics.text(
             minecraft.font,
-            "Hunters:",
+            "\uD83C\uDFF9:",
             10,
             55,
             0xFFFFFFFF,
