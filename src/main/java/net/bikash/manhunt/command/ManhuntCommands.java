@@ -57,8 +57,13 @@ public class ManhuntCommands {
                 ))
                 .then(Commands.literal("status").executes(context -> {
                             if (Manhunt.Game.isRunning()) {
+                                long elapsed = Manhunt.Game.getElapsedTime();
+                                long totalseconds = elapsed/1000;
+                                long minutes = totalseconds/60;
+                                long  seconds = totalseconds%60;
+
                                 context.getSource().sendSuccess(
-                                        () -> Component.literal("Manhunt is Currently running!"),
+                                        () -> Component.literal("Manhunt is Currently running!  Time: "+minutes+ "min " + seconds + "sec"),
                                         false
                                 );
 
