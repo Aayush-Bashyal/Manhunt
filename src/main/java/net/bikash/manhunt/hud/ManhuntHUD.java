@@ -4,6 +4,9 @@ import net.bikash.manhunt.Manhunt;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+
+import java.util.UUID;
 
 public class ManhuntHUD {
     public static void register (){
@@ -50,5 +53,46 @@ public class ManhuntHUD {
 
             );
         }
+        if(Manhunt.Game.getRunner()!=null){
+            ServerPlayer runner = minecraft.getSingleplayerServer().getPlayerList().getPlayer(Manhunt.Game.getRunner());
+
+            if(runner!=null){
+                graphics.text(
+                        minecraft.font,
+                        "Runner: "+runner.getName().getString(),
+                        10,
+                        40,
+                        0xFFFFFFFF,
+                        true
+
+                );
+
+            }
+        }
+        graphics.text(
+                minecraft.font,
+                "Hunters:",
+                10,
+                55,
+                0xFFFFFFFF,
+                true
+        );
+        int y=70;
+        for(UUID hunterUUID : Manhunt.Game.getHunters()){
+            ServerPlayer hunter = minecraft.getSingleplayerServer().getPlayerList().getPlayer(hunterUUID);
+
+            if(hunter!=null){
+                graphics.text(
+                        minecraft.font,
+                        hunter.getName().getString(),
+                        20,
+                        y,
+                        0xFFFFFFFF,
+                        true
+                );
+                y+=15;
+            }
+        }
     }
+
 }
