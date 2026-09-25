@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
+import net.bikash.manhunt.item.ModItems;
 import java.util.UUID;
 
 public class ManhuntCommands {
@@ -46,7 +46,7 @@ public class ManhuntCommands {
                         ServerPlayer hunter = context.getSource().
                                 getServer().getPlayerList().getPlayer(hunterUUID);
                         if(hunter!=null){
-                            hunter.getInventory().add(Items.COMPASS.getDefaultInstance());
+                            hunter.getInventory().add(ModItems.MANHUNT_COMPASS.getDefaultInstance());
                         }
                     }
                     return 1;
