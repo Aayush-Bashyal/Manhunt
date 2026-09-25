@@ -18,6 +18,9 @@
 		"main": [
 			"net.bikash.manhunt.Manhunt"
 		],
+		"client": [
+			"net.bikash.manhunt.ManhuntClient"
+		],
 		"fabric-datagen": [
 			"net.bikash.manhunt.ManhuntDataGenerator"
 		]
