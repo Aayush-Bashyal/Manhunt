@@ -1,6 +1,8 @@
 package net.bikash.manhunt.hud;
 
 import net.bikash.manhunt.Manhunt;
+import net.bikash.manhunt.client.ManhuntClientNetwork;
+import net.bikash.manhunt.game.ManhuntTracker;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
@@ -97,7 +99,45 @@ if (Manhunt.Game.isRunning()){
                 );
                 y+=15;
             }
-        }}
+
+        }
+
+
+
+
+            double angle = ManhuntClientNetwork.getRunnerAngle();
+
+            String direction;
+
+            if (angle >= 337.5 || angle < 22.5) {
+                direction = "→";
+            } else if (angle < 67.5) {
+                direction = "↗";
+            } else if (angle < 112.5) {
+                direction = "↑";
+            } else if (angle < 157.5) {
+                direction = "↖";
+            } else if (angle < 202.5) {
+                direction = "←";
+            } else if (angle < 247.5) {
+                direction = "↙";
+            } else if (angle < 292.5) {
+                direction = "↓";
+            } else {
+                direction = "↘";
+            }
+
+            graphics.text(
+                    minecraft.font,
+                    "🧭 " + direction + " "
+                            + String.format("%.0f°", angle),
+                    10,
+                    y + 20,
+                    0xFFFFFFFF,
+                    true
+            );
+        }
+}
     }
 
-}
+

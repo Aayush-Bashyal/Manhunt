@@ -11,14 +11,27 @@ import net.bikash.manhunt.item.ManhuntCompassItem;
      public static final ResourceKey<Item> MANHUNT_COMPASS_KEY = ResourceKey.create(
              BuiltInRegistries.ITEM.key(),
              Identifier.fromNamespaceAndPath(Manhunt.MOD_ID,
-                     "manhunt_compass") );
+                     "manhunt_compass")
+
+     );
      public static final Item MANHUNT_COMPASS = register(
-             MANHUNT_COMPASS_KEY,new ManhuntCompassItem.Properties() );
+             MANHUNT_COMPASS_KEY,
+             new ManhuntCompassItem(
+                     new Item.Properties().setId(MANHUNT_COMPASS_KEY)
+             )
+     );
      private static Item register(
-             ResourceKey<Item> key, Item.Properties properties ) {
-         Item item = new Item(properties.setId(key));
-         Registry.register( BuiltInRegistries.ITEM, key, item );
-         return item;
-     } public static void initialize() {
+
+             ResourceKey<Item> key,
+             Item item
+     ) {
+      Registry.register(
+              BuiltInRegistries.ITEM,
+              key,
+              item
+      );
+      return item;
+     }
+     public static void initialize() {
 
      } }
