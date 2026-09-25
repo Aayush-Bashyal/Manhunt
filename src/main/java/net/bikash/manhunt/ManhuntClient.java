@@ -1,6 +1,7 @@
 package net.bikash.manhunt;
 
 import net.bikash.manhunt.client.ManhuntClientNetwork;
+import net.bikash.manhunt.client.ManhuntCompassRenderer;
 import net.bikash.manhunt.hud.ManhuntHUD;
 import net.fabricmc.api.ClientModInitializer;
 
@@ -11,6 +12,7 @@ public class ManhuntClient implements ClientModInitializer {
     public void onInitializeClient(){
         ManhuntHUD.register();
         ManhuntClientNetwork.register();
+
     }
 
 }
