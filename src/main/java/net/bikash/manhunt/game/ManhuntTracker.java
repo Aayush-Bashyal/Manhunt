@@ -31,13 +31,42 @@ if(Manhunt.Game.getRunner()==null){
 if(runner==null){
     return;
 }
+            if (!runner.isAlive()) {
+                Manhunt.Game.stop();
+                server.getPlayerList()
+                        .broadcastSystemMessage( net.minecraft.network.chat.Component.literal
+                                ( "HUNTERSSS WINN!! \uD83D\uDE4C " ),
+                                false
+                        );
+                return;
+            }
+
+for (var hunterUUID:Manhunt.Game.getHunters()){
+    ServerPlayer hunter = server.getPlayerList().getPlayer(hunterUUID);
+
+    if(hunter==null){
+        continue;
+    }
+    if(hunter.level().dimension()!=runner.level().dimension()){
+        continue;
+    }
+
+    double dx = runner.getX() - hunter.getX();
+    double dz = runner.getZ() - hunter.getZ();
 
 
+    //calculate theee anglee form the hunter to the runner
+double angle = Math.toDegrees(
+        Math.atan2(dz,dx)
+);
+if(angle<0){
+    angle+=360;
 
-//tracking the position of the runner
-            double x = runner.getX();
-            double y = runner.getY();
-            double z = runner.getZ();
+}
+System.out.println(
+        "Hunter: "+hunter.getName().getString()+"| Runner angle:" + angle
+);
+}
 
 
         });

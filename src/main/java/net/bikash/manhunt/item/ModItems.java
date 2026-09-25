@@ -4,6 +4,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.bikash.manhunt.item.ManhuntCompassItem;
 
  import net.minecraft.world.item.Item;
  public class ModItems {
@@ -12,7 +13,7 @@ import net.minecraft.resources.ResourceKey;
              Identifier.fromNamespaceAndPath(Manhunt.MOD_ID,
                      "manhunt_compass") );
      public static final Item MANHUNT_COMPASS = register(
-             MANHUNT_COMPASS_KEY, new Item.Properties() );
+             MANHUNT_COMPASS_KEY,new ManhuntCompassItem.Properties() );
      private static Item register(
              ResourceKey<Item> key, Item.Properties properties ) {
          Item item = new Item(properties.setId(key));
