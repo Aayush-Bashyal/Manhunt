@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.bikash.manhunt.item.ModItems;
+import net.bikash.manhunt.game.ManhuntGame;
 import java.util.UUID;
 
 public class ManhuntCommands {
@@ -30,19 +31,24 @@ public class ManhuntCommands {
 
                 // /manhunt start
                 .then(Commands.literal("start").executes(context -> {
-                    if (Manhunt.Game.isRunning()) {
+
+                    ManhuntGame game = Manhunt.getGame(
+                            context.getSource().getServer()
+                    );
+
+                    if (game.isRunning()) {
                         context.getSource().sendSuccess(
                                 () -> Component.literal("Manhunt is Currently running"),
                                 false
                         );
                         return 0;
                     }
-                    Manhunt.Game.start();
+                   game.start();
                     context.getSource().sendSuccess(
                             () -> Component.literal("Manhunt Started!"),
                             false
                     );
-                    for(UUID hunterUUID: Manhunt.Game.getHunters()){
+                    for(UUID hunterUUID: game.getHunters()){
                         ServerPlayer hunter = context.getSource().
                                 getServer().getPlayerList().getPlayer(hunterUUID);
                         if(hunter!=null){
@@ -56,14 +62,17 @@ public class ManhuntCommands {
 
                 // /manhunt stop
                 .then(Commands.literal("stop").executes(context -> {
-                            if (!Manhunt.Game.isRunning()) {
+                    ManhuntGame game = Manhunt.getGame(
+                            context.getSource().getServer()
+                    );
+                            if (!game.isRunning()) {
                                 context.getSource().sendSuccess(
                                         () -> Component.literal("Manhunt is not running!"),
                                         false
                                 );
                                 return 0;
                             }
-                            Manhunt.Game.stop();
+                            game.stop();
                             context.getSource().sendSuccess(
                                     () -> Component.literal("Manhunt Stopped!"),
                                     false
@@ -73,7 +82,10 @@ public class ManhuntCommands {
                 ))
                 // /manhunt status
                 .then(Commands.literal("status").executes(context -> {
-                            if (Manhunt.Game.isRunning()) {
+                    ManhuntGame game = Manhunt.getGame(
+                            context.getSource().getServer()
+                    );
+                            if (game.isRunning()) {
 
 
                                 context.getSource().sendSuccess(
@@ -95,10 +107,13 @@ public class ManhuntCommands {
                                 .then(Commands.literal("runner")
                                         .then(Commands.argument("player", EntityArgument.player())
                                                 .executes(context -> {
+                                                    ManhuntGame game = Manhunt.getGame(
+                                                            context.getSource().getServer()
+                                                    );
                                                             ServerPlayer player = EntityArgument.getPlayer(
                                                                     context, "player"
                                                             );
-                                                            Manhunt.Game.setRunner(player.getUUID());
+                                                            game.setRunner(player.getUUID());
                                                             context.getSource().sendSuccess(
                                                                     () -> Component.literal(player.getName().getString() + "is the Speedrunner!"),
                                                                     false
@@ -112,10 +127,15 @@ public class ManhuntCommands {
                                 .then(Commands.literal("hunter")
                                         .then(Commands.argument("player", EntityArgument.player())
                                                 .executes(context -> {
+
+                                                    ManhuntGame game = Manhunt.getGame(
+                                                            context.getSource().getServer()
+                                                    );
+
                                                             ServerPlayer player = EntityArgument.getPlayer(
                                                                     context, "player"
                                                             );
-                                                            Manhunt.Game.addHunter(player.getUUID());
+                                                            game.addHunter(player.getUUID());
                                                             context.getSource().sendSuccess(
                                                                     () -> Component.literal(player.getName().getString() + "is a Hunter now!"),
                                                                     false
@@ -129,8 +149,14 @@ public class ManhuntCommands {
                         .then(Commands.literal("removehunter")
                                 .then (Commands.argument("player",EntityArgument.player())
                                         .executes(context -> {
+
+
+                                            ManhuntGame game = Manhunt.getGame(
+                                                    context.getSource().getServer()
+                                            );
+
                                             ServerPlayer player = EntityArgument.getPlayer(context,"player");
-                                         boolean removed =  Manhunt.Game.removeHunter(player.getUUID());
+                                         boolean removed = game.removeHunter(player.getUUID());
                                          if(removed) {
                                              context.getSource().sendSuccess(
                                                      () -> Component.literal(
@@ -155,10 +181,15 @@ public class ManhuntCommands {
                 .then(Commands.literal("removerunner")
                         .then (Commands.argument("player",EntityArgument.player())
                                 .executes(context -> {
-                                    ServerPlayer player = EntityArgument.getPlayer(context,"player");
-                                   if (Manhunt.Game.getRunner() !=null && Manhunt.Game.getRunner().equals(player.getUUID())){
 
-                                       Manhunt.Game.removeRunner();
+                                    ManhuntGame game = Manhunt.getGame(
+                                            context.getSource().getServer()
+                                    );
+
+                                    ServerPlayer player = EntityArgument.getPlayer(context,"player");
+                                   if (game.getRunner() !=null && game.getRunner().equals(player.getUUID())){
+
+                                       game.removeRunner();
 
 
 
