@@ -88,29 +88,76 @@ public class ManhuntTracker {
 
 
         });
-        ServerLivingEntityEvents.AFTER_DEATH.register(((entity, damageSource) -> {
+
+//this detectss enderdragonn death
+        ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
             if(!Manhunt.Game.isRunning()){
                 return;
             }
             if(!(entity instanceof EnderDragon)){
                 return;
             }
+
+            //if runner wins ,
             Manhunt.Game.finish("Runner");
 
-            long elapsed = Manhunt.Game.getFinalTime();
+            //setting all hunters name ,
 
-            long totalSeconds = elapsed/1000;
-            long minutes = totalSeconds/60;
-            long seconds = totalSeconds%60;
+            StringBuilder hunters = new StringBuilder();
+            for (var hunterUUID : Manhunt.Game.getHunters()){
+                ServerPlayer hunter = entity.level().getServer().getPlayerList().getPlayer(hunterUUID);
 
-entity.level().getServer().getPlayerList().broadcastSystemMessage(
-        net.minecraft.network.chat.Component.literal(
-                "RUNNER WINSS!!!! \uD83C\uDFC6 Time: "
-                +minutes + "min  "+ seconds+ "sec"
-        ),
-        false
-);
-        }));
+                if(hunter!=null){
+                    if (hunter != null) {
+                        if(hunters.length() > 0 ){
+                            hunters.append(", ");
+                        }
+                        hunters.append(
+                                hunter.getName().getString()
+                        );
+                    }
+                }
+                //now getting hunters name
+                ServerPlayer runnerPlayer = entity.level().getServer().getPlayerList().getPlayer(Manhunt.Game.getRunner());
+                String runnerName = "Unknown";
+
+                if(runnerPlayer!=null){
+                    runnerName = runnerPlayer.getName().getString();
+                }
+                // the display shown in the screen
+
+                entity.level().getServer().getPlayerList().broadcastSystemMessage(
+                        net.minecraft.network.chat.Component.literal(
+                                "\uD83C\uDFC6 RUNNER WINS!!"
+                        ),
+                        false
+                );
+                entity.level().getServer().getPlayerList().broadcastSystemMessage(
+                        net.minecraft.network.chat.Component.literal(
+                                "Runner: " + runnerName),
+                        false
+                );
+                entity.level().getServer().getPlayerList().broadcastSystemMessage(
+                        net.minecraft.network.chat.Component.literal(
+                                "Hunters: " + hunters
+                        ),
+                        false
+                );
+                entity.level().getServer().getPlayerList().broadcastSystemMessage(
+                        net.minecraft.network.chat.Component.literal(
+                                "Final Time: "
+                                        + Manhunt.Game.getFinalTimeFormatted()
+                        ),
+                        false
+                );
+                entity.level().getServer().getPlayerList().broadcastSystemMessage(
+                        net.minecraft.network.chat.Component.literal(
+                                "================================="
+                        ),
+                        false
+                 );
+            }  });
+
 
     }
     public static double getRunnerAngle(){
