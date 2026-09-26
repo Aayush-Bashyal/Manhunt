@@ -152,7 +152,7 @@ public class ManhuntTracker {
                 );
                 entity.level().getServer().getPlayerList().broadcastSystemMessage(
                         net.minecraft.network.chat.Component.literal(
-                                "================================="
+                                "***************************************"
                         ),
                         false
                  );

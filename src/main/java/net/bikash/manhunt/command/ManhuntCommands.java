@@ -124,6 +124,20 @@ public class ManhuntCommands {
 
                                                         }
                                                 ) ))
+                        .then(Commands.literal("removehunter")
+                                .then (Commands.argument("player",EntityArgument.player())
+                                        .executes(context -> {
+                                            ServerPlayer player = EntityArgument.getPlayer(context,"player");
+                                            Manhunt.Game.removeHunter(player.getUUID());
+                                            context.getSource().sendSuccess(
+                                                    ()->Component.literal(
+                                                            player.getName().getString() + "IS REMOVED AS HUNTER!"
+                                                    ),
+                                                    false
+                                            );
+                                            return 1;
+                                        })))
+
                 );
 
 

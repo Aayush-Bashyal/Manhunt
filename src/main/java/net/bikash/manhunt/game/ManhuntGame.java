@@ -71,4 +71,10 @@ public String getFinalTimeFormatted(){
             seconds
     );
 }
+public boolean removeHunter(UUID hunter) {
+      return hunters.remove(hunter);
+}
+public void removeRunner(){
+        runner = null;
+}
 }
