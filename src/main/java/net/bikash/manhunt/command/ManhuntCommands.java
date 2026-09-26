@@ -124,21 +124,67 @@ public class ManhuntCommands {
 
                                                         }
                                                 ) ))
+
+                // removing hunter command
                         .then(Commands.literal("removehunter")
                                 .then (Commands.argument("player",EntityArgument.player())
                                         .executes(context -> {
                                             ServerPlayer player = EntityArgument.getPlayer(context,"player");
-                                            Manhunt.Game.removeHunter(player.getUUID());
-                                            context.getSource().sendSuccess(
-                                                    ()->Component.literal(
-                                                            player.getName().getString() + "IS REMOVED AS HUNTER!"
-                                                    ),
-                                                    false
-                                            );
-                                            return 1;
+                                         boolean removed =  Manhunt.Game.removeHunter(player.getUUID());
+                                         if(removed) {
+                                             context.getSource().sendSuccess(
+                                                     () -> Component.literal(
+                                                             player.getName().getString() + "IS REMOVED AS HUNTER!"
+                                                     ),
+                                                     false
+                                             );
+                                         }
+                                          else {
+                                              context.getSource().sendSuccess(
+                                                      ()->Component.literal(
+                                                              player.getName().getString()+"IS NOT A HUNTER !"
+                                                      ),
+                                                      false
+                                              );
+                                         }
+                                          return 1;
+
                                         })))
 
-                );
+                //removing runner command
+                .then(Commands.literal("removerunner")
+                        .then (Commands.argument("player",EntityArgument.player())
+                                .executes(context -> {
+                                    ServerPlayer player = EntityArgument.getPlayer(context,"player");
+                                   if (Manhunt.Game.getRunner() !=null && Manhunt.Game.getRunner().equals(player.getUUID())){
+
+                                       Manhunt.Game.removeRunner();
+
+
+
+                                       context.getSource().sendSuccess(
+                                               () -> Component.literal(
+                                                       player.getName().getString() + "IS REMOVED AS SPEEDRUNNER!"
+                                               ),
+                                               false
+                                       );
+
+                                   }
+
+                                    else {
+                                        context.getSource().sendSuccess(
+                                                ()->Component.literal(
+                                                        player.getName().getString()+"IS NOT A SPEEDRUNNER !"
+                                                ),
+                                                false
+                                        );
+                                    }
+                                    return 1;
+
+                                })))
+
+
+        );
 
 
     }
