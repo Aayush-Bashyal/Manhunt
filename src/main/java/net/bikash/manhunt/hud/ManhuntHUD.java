@@ -1,8 +1,7 @@
 package net.bikash.manhunt.hud;
 
 import net.bikash.manhunt.Manhunt;
-import net.bikash.manhunt.client.ManhuntClientNetwork;
-import net.bikash.manhunt.game.ManhuntTracker;
+import net.bikash.manhunt.game.ManhuntGame;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
@@ -12,6 +11,8 @@ import java.util.UUID;
 
 public class ManhuntHUD {
     public static void register (){
+
+
         HudElementRegistry.addLast(
                 Identifier.parse("manhunt:hud"),
                 ManhuntHUD::render
@@ -21,7 +22,14 @@ public class ManhuntHUD {
             net.minecraft.client.gui.GuiGraphicsExtractor graphics,
             net.minecraft.client.DeltaTracker deltaTracker
     ){
+
         Minecraft minecraft = Minecraft.getInstance();
+
+        if(minecraft.getSingleplayerServer() == null){
+            return;
+        }
+        ManhuntGame game = Manhunt.getGame(minecraft.getSingleplayerServer());
+
         graphics.text(
                 minecraft.font,
                 "MANHUNT",
@@ -32,8 +40,10 @@ public class ManhuntHUD {
         );
 
         //adding timer of the manhunt which tracks the total time taken in minecraft on the top left corner
-        if(Manhunt.Game.isRunning()){
-            long elasped = Manhunt.Game.getElapsedTime();
+        if(game.isRunning()){
+
+
+            long elasped = game.getElapsedTime();
 
             long totalseconds = elasped/1000;
             long hours = totalseconds / 3600;
@@ -55,11 +65,11 @@ public class ManhuntHUD {
 
             );
         }
-        if(Manhunt.Game.isRunning() ){
+        if(game.isRunning() ){
 
 
-        if(Manhunt.Game.getRunner()!=null){
-            ServerPlayer runner = minecraft.getSingleplayerServer().getPlayerList().getPlayer(Manhunt.Game.getRunner());
+        if(game.getRunner()!=null){
+            ServerPlayer runner = minecraft.getSingleplayerServer().getPlayerList().getPlayer(game.getRunner());
 
             if(runner!=null) {
                 graphics.text(
@@ -74,10 +84,10 @@ public class ManhuntHUD {
             }
             }
         }
-if (Manhunt.Game.isRunning()){
+if (game.isRunning()){
     graphics.text(
             minecraft.font,
-            "HUNTER: ",
+            "HUNTERS: ",
             10,
             55,
             0xFFFFFFFF,
@@ -85,7 +95,7 @@ if (Manhunt.Game.isRunning()){
     );
 
         int y=70;
-        for(UUID hunterUUID : Manhunt.Game.getHunters()){
+        for(UUID hunterUUID : game.getHunters()){
             ServerPlayer hunter = minecraft.getSingleplayerServer().getPlayerList().getPlayer(hunterUUID);
 
             if(hunter!=null){
