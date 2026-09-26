@@ -16,9 +16,9 @@ public class ManhuntTracker {
     public static void register() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
 
+            ManhuntGame game = Manhunt.getGame(server);
 
-
-            if(!Manhunt.Game.isRunning()){
+            if(!game.isRunning()){
                 return;
             }
             tickcounter++;
@@ -28,16 +28,16 @@ public class ManhuntTracker {
             }
             tickcounter= 0;
 
-            if(Manhunt.Game.getRunner()==null){
+            if(game.getRunner()==null){
                 return;
             }
-            ServerPlayer runner = server.getPlayerList().getPlayer(Manhunt.Game.getRunner());
+            ServerPlayer runner = server.getPlayerList().getPlayer(game.getRunner());
 
             if(runner==null){
                 return;
             }
             if (!runner.isAlive()) {
-                Manhunt.Game.finish("Hunters");
+                game.finish("Hunters");
                 server.getPlayerList()
                         .broadcastSystemMessage( net.minecraft.network.chat.Component.literal
                                         ( "HUNTERSSS WINN!! \uD83D\uDE4C " ),
@@ -46,7 +46,7 @@ public class ManhuntTracker {
                 return;
             }
 
-            for (var hunterUUID:Manhunt.Game.getHunters()){
+            for (var hunterUUID:game.getHunters()){
                 ServerPlayer hunter = server.getPlayerList().getPlayer(hunterUUID);
 
                 if(hunter==null){
@@ -91,7 +91,16 @@ public class ManhuntTracker {
 
 //this detectss enderdragonn death
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
-            if(!Manhunt.Game.isRunning()){
+
+            if (entity.level().getServer() == null) {
+                return;
+            }
+
+            ManhuntGame game = Manhunt.getGame(
+                    entity.level().getServer()
+            );
+
+            if(!game.isRunning()){
                 return;
             }
             if(!(entity instanceof EnderDragon)){
@@ -99,12 +108,12 @@ public class ManhuntTracker {
             }
 
             //if runner wins ,
-            Manhunt.Game.finish("Runner");
+            game.finish("Runner");
 
             //setting all hunters name ,
 
             StringBuilder hunters = new StringBuilder();
-            for (var hunterUUID : Manhunt.Game.getHunters()){
+            for (var hunterUUID : game.getHunters()){
                 ServerPlayer hunter = entity.level().getServer().getPlayerList().getPlayer(hunterUUID);
 
                 if(hunter!=null){
@@ -118,7 +127,7 @@ public class ManhuntTracker {
                     }
                 }
                 //now getting hunters name
-                ServerPlayer runnerPlayer = entity.level().getServer().getPlayerList().getPlayer(Manhunt.Game.getRunner());
+                ServerPlayer runnerPlayer = entity.level().getServer().getPlayerList().getPlayer(game.getRunner());
                 String runnerName = "Unknown";
 
                 if(runnerPlayer!=null){
@@ -146,7 +155,7 @@ public class ManhuntTracker {
                 entity.level().getServer().getPlayerList().broadcastSystemMessage(
                         net.minecraft.network.chat.Component.literal(
                                 "Final Time: "
-                                        + Manhunt.Game.getFinalTimeFormatted()
+                                        + game.getFinalTimeFormatted()
                         ),
                         false
                 );
