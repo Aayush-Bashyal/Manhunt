@@ -113,7 +113,19 @@ public class ManhuntCommands {
                                                             ServerPlayer player = EntityArgument.getPlayer(
                                                                     context, "player"
                                                             );
+
                                                             game.setRunner(player.getUUID());
+
+                                                            int spawnX = player.level().getRespawnData().pos().getX();
+                                                            int spawnZ = player.level().getRespawnData().pos().getZ();
+
+                                                            game.setSpawnChunk(
+                                                                    spawnX >> 4,
+                                                                    spawnZ >> 4
+                                                            );
+
+
+
                                                             context.getSource().sendSuccess(
                                                                     () -> Component.literal(player.getName().getString() + "is the Speedrunner!"),
                                                                     false

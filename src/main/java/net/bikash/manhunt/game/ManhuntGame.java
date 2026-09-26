@@ -11,6 +11,9 @@ public class ManhuntGame {
     private long startTime;
     private long finalTime;
     private String winner;
+    private int spawnChunkX;
+    private int spawnChunkZ;
+    private boolean spawnChunkSet = false;
 
     public boolean isRunning(){
         return running;
@@ -76,5 +79,19 @@ public boolean removeHunter(UUID hunter) {
 }
 public void removeRunner(){
         runner = null;
+}
+public void setSpawnChunk(int x, int z){
+        spawnChunkX = x;
+        spawnChunkZ = z;
+        spawnChunkSet = true;
+}
+public boolean isSpawnChunkSet(){
+        return spawnChunkSet;
+}
+public int getSpawnChunkX(){
+        return spawnChunkX;
+}
+public int getSpawnChunkZ(){
+        return spawnChunkZ;
 }
 }
