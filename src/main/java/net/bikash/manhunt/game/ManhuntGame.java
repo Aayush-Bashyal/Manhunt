@@ -9,6 +9,8 @@ public class ManhuntGame {
     private UUID runner;
     private final List<UUID> hunters = new ArrayList<>();
     private long startTime;
+    private long finalTime;
+    private String winner;
 
     public boolean isRunning(){
         return running;
@@ -45,5 +47,28 @@ public List<UUID> getHunters(){
         return hunters;
 }
 
+public void finish(String winner){
+        finalTime = getElapsedTime();
+        this.winner = winner;
+        stop();
+}
+public long getFinalTime(){
+        return finalTime;
+}
+public String getWinner(){
+        return winner;
+}
 
+public String getFinalTimeFormatted(){
+    long totalSeconds = finalTime / 1000;
+
+    long minutes = totalSeconds / 60;
+    long seconds = totalSeconds % 60;
+    
+    return String.format(
+            "%02d:%02d",
+            minutes,
+            seconds
+    );
+}
 }

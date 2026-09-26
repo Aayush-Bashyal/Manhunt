@@ -1,10 +1,12 @@
 package net.bikash.manhunt.game;
 
 import net.bikash.manhunt.Manhunt;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.bikash.manhunt.network.ManhuntNetwork;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 
 public class ManhuntTracker {
 
@@ -35,7 +37,7 @@ public class ManhuntTracker {
                 return;
             }
             if (!runner.isAlive()) {
-                Manhunt.Game.stop();
+                Manhunt.Game.finish("Hunters");
                 server.getPlayerList()
                         .broadcastSystemMessage( net.minecraft.network.chat.Component.literal
                                         ( "HUNTERSSS WINN!! \uD83D\uDE4C " ),
@@ -68,8 +70,7 @@ public class ManhuntTracker {
                 );
                 double hunterYaw = hunter.getYRot();
                 angle = angle - (hunterYaw-90);
-// converttt the worlds angleee to directionnn relativee to hunterrw
-               angle=angle-(hunterYaw-90);
+                angle = (angle+360)%360;
 
                 runnerAngle = angle;
 
@@ -87,6 +88,30 @@ public class ManhuntTracker {
 
 
         });
+        ServerLivingEntityEvents.AFTER_DEATH.register(((entity, damageSource) -> {
+            if(!Manhunt.Game.isRunning()){
+                return;
+            }
+            if(!(entity instanceof EnderDragon)){
+                return;
+            }
+            Manhunt.Game.finish("Runner");
+
+            long elapsed = Manhunt.Game.getFinalTime();
+
+            long totalSeconds = elapsed/1000;
+            long minutes = totalSeconds/60;
+            long seconds = totalSeconds%60;
+
+entity.level().getServer().getPlayerList().broadcastSystemMessage(
+        net.minecraft.network.chat.Component.literal(
+                "RUNNER WINSS!!!! \uD83C\uDFC6 Time: "
+                +minutes + "min  "+ seconds+ "sec"
+        ),
+        false
+);
+        }));
+
     }
     public static double getRunnerAngle(){
         return runnerAngle;
