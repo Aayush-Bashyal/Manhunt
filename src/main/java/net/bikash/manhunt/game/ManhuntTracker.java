@@ -1,12 +1,15 @@
 package net.bikash.manhunt.game;
 
 import net.bikash.manhunt.Manhunt;
+import net.bikash.manhunt.item.ModItems;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.bikash.manhunt.network.ManhuntNetwork;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.item.ItemStack;
 
 public class ManhuntTracker {
 
@@ -198,8 +201,32 @@ public class ManhuntTracker {
                         ),
                         false
                  );
+                // not letting the manhunt compass drop when the hunter dies
+
              });
 
+        ServerPlayerEvents.AFTER_RESPAWN.register(
+                (oldPlayer, newPlayer, alive) -> {
+                    if(newPlayer.level().getServer()==null){
+                        return;
+                    }
+                    ManhuntGame game = Manhunt.getGame(newPlayer.level().getServer());
+                    if(!game.isRunning()){
+                        return;
+                    }
+
+                    if(!game.getHunters().contains(
+                            newPlayer.getUUID()
+                    )){
+                      return;
+                    }
+                    //gives the compass back to the hunters
+                    newPlayer.getInventory().add(
+                            ModItems.MANHUNT_COMPASS.getDefaultInstance()
+                    );
+
+                }
+        );
 
     }
     public static double getRunnerAngle(){

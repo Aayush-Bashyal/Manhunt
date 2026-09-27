@@ -1,6 +1,7 @@
 package net.bikash.manhunt.item;
 
 import net.bikash.manhunt.Manhunt;
+import net.bikash.manhunt.game.ManhuntGame;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -25,7 +26,10 @@ public class ManhuntCompassItem extends Item {
             if (!(player instanceof ServerPlayer hunter)) {
                 return InteractionResult.PASS;
             }
-            if (!Manhunt.Game.isRunning()) {
+            ManhuntGame game =
+                    Manhunt.getGame(level.getServer());
+
+            if (!game.isRunning()) {
                 hunter.sendSystemMessage(
                         net.minecraft.network.chat.Component.literal(
                                 "Manhunt is not Running!"
@@ -36,7 +40,7 @@ public class ManhuntCompassItem extends Item {
             }
             ServerPlayer runner = level.getServer()
                     .getPlayerList()
-                    .getPlayer(Manhunt.Game.getRunner());
+                    .getPlayer(game.getRunner());
             if (runner == null || hunter.level().dimension() != runner.level().dimension()) {
                 hunter.sendSystemMessage(
                         Component.literal("Player not Found")
