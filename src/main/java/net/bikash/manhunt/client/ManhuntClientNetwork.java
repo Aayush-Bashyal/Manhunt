@@ -1,4 +1,6 @@
 package net.bikash.manhunt.client;
+import net.bikash.manhunt.hud.ManhuntHUD;
+import net.bikash.manhunt.network.ManhuntHUDNetwork;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -19,8 +21,18 @@ public class ManhuntClientNetwork {
 
                         updateCompassModel();
 
-                    System.out.println(
-                            "Client received angle: "+runnerAngle
+
+                }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                ManhuntHUDNetwork.TYPE,
+                (payload, context)->{
+                    ManhuntHUD.update(
+                            payload.running(),
+                            payload.elapsedTime(),
+                            payload.runnerName(),
+                            payload.hunterNames()
                     );
                 }
         );
@@ -38,6 +50,9 @@ public class ManhuntClientNetwork {
 
         if (model >= 31) {
             model = 30;
+        }
+        if (model<0){
+            model=0;
         }
 
         for (int i = 0; i < minecraft.player.getInventory().getContainerSize(); i++) {

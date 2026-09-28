@@ -2,6 +2,7 @@ package net.bikash.manhunt.game;
 
 import net.bikash.manhunt.Manhunt;
 import net.bikash.manhunt.item.ModItems;
+import net.bikash.manhunt.network.ManhuntHUDNetwork;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -12,7 +13,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.item.ItemStack;
 
 public class ManhuntTracker {
-
+private static int hudCounter = 0;
     private static int tickcounter = 0;
     private static double runnerAngle = 0;
 
@@ -20,6 +21,90 @@ public class ManhuntTracker {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
 
             ManhuntGame game = Manhunt.getGame(server);
+
+hudCounter++;
+if(hudCounter>=5){
+    hudCounter=0;
+    String runnerName = "";
+
+    if(game.getRunner()!=null){
+        ServerPlayer runner = server.getPlayerList().getPlayer(
+                game.getRunner()
+        );
+
+        if(runner!=null){
+            runnerName=runner.getName().getString();
+        }
+    }
+    StringBuilder hunterNames = new StringBuilder();
+
+    for(var hunterUUID:game.getHunters()){
+        ServerPlayer hunter = server.getPlayerList().getPlayer(hunterUUID);
+
+        if(hunter!=null){
+            if(hunterNames.length()>0){
+                hunterNames.append(",");
+            }
+            hunterNames.append(
+                    hunter.getName().getString()
+            );
+        }
+    }
+    ManhuntHUDNetwork hudPacket = new ManhuntHUDNetwork(
+            game.isRunning(),
+            game.isRunning()
+                    ? game.getElapsedTime()
+                    : game.getFinalTime(),
+            runnerName,
+            hunterNames.toString()
+
+            );
+    for(ServerPlayer player : server.getPlayerList().getPlayers()){
+        ServerPlayNetworking.send(
+                player,
+                hudPacket
+        );
+    }
+            }
+
+            //sends the HUD to every single player in the world
+            if(tickcounter%5==0){
+                String runnerName = "";
+                if(game.getRunner()!=null){
+                    ServerPlayer runner = server.getPlayerList().getPlayer(
+                            game.getRunner()
+                    );
+                    if(runner!=null){
+                        runnerName=runner.getName().getString();
+                    }
+                }
+
+                StringBuilder hunterNames = new StringBuilder();
+                for(var hunterUUID : game.getHunters()){
+                    ServerPlayer hunter = server.getPlayerList().getPlayer(hunterUUID);
+
+                    if(hunter!=null){
+                        if(hunterNames.length()>0){
+                            hunterNames.append(",");
+                        }
+                        hunterNames.append(hunter.getName().getString()
+                        );
+                    }
+                }
+                ManhuntHUDNetwork hudPacket = new ManhuntHUDNetwork(
+                        game.isRunning(),
+                        game.isRunning()
+                        ?game.getElapsedTime()
+                                :game.getFinalTime(),
+                        runnerName,
+                        hunterNames.toString()
+                );
+                for(ServerPlayer player:server.getPlayerList().getPlayers()){
+                    ServerPlayNetworking.send(
+                            player,hudPacket
+                    );
+                }
+            }
 
             //making that when the runner leaves the spawn chunk the manhunt automatically start
 

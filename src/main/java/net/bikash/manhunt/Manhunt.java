@@ -4,6 +4,7 @@ import net.bikash.manhunt.command.ManhuntCommands;
 import net.bikash.manhunt.game.ManhuntGame;
 import net.bikash.manhunt.game.ManhuntTracker;
 import net.bikash.manhunt.item.ModItems;
+import net.bikash.manhunt.network.ManhuntHUDNetwork;
 import net.bikash.manhunt.network.ManhuntNetwork;
 import net.fabricmc.api.ModInitializer;
 
@@ -28,10 +29,17 @@ public class Manhunt implements ModInitializer {
 	@Override
 	public void onInitialize() {
 
+
+
 		PayloadTypeRegistry.clientboundPlay().register(
 				ManhuntNetwork.TYPE,
 				ManhuntNetwork.CODEC
 		);
+		PayloadTypeRegistry.clientboundPlay().register(
+				ManhuntHUDNetwork.TYPE,
+				ManhuntHUDNetwork.CODEC
+		);
+
 
 		ManhuntTracker.register();
 		ManhuntCommands.register();

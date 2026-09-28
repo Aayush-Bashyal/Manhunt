@@ -10,6 +10,11 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.UUID;
 
 public class ManhuntHUD {
+    private static boolean running = false;
+    private static long elaspedTime = 0;
+    private static String runnerName="";
+    private static String hunterNames="";
+
     public static void register (){
 
 
@@ -18,6 +23,18 @@ public class ManhuntHUD {
                 ManhuntHUD::render
         );
     }
+
+    public static void update(
+            boolean gameRunning,
+            long time,
+            String runner,
+            String hunters
+    ){
+        running = gameRunning;
+        elaspedTime=time;
+        runnerName=runner;
+        hunterNames=hunters;
+    }
     private static void render(
             net.minecraft.client.gui.GuiGraphicsExtractor graphics,
             net.minecraft.client.DeltaTracker deltaTracker
@@ -25,9 +42,13 @@ public class ManhuntHUD {
 
         Minecraft minecraft = Minecraft.getInstance();
 
-        if(minecraft.getSingleplayerServer() == null){
+        if(minecraft.player == null){
             return;
         }
+        if(!running){
+            return;
+        }
+
         ManhuntGame game = Manhunt.getGame(minecraft.getSingleplayerServer());
 
         graphics.text(
