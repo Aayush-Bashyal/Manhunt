@@ -6,6 +6,7 @@ import net.bikash.manhunt.network.ManhuntHUDNetwork;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.mixin.recipe.sync.ServerCommonPacketListenerImplAccessor;
 import net.minecraft.server.level.ServerPlayer;
 import net.bikash.manhunt.network.ManhuntNetwork;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -106,35 +107,57 @@ if(hudCounter>=5){
                 }
             }
 
-            //making that when the runner leaves the spawn chunk the manhunt automatically start
+            //making that when the runner is 15 blocks far from the runner
+
+if(!game.isRunning() && game.getRunner()!=null && !game.getHunters().isEmpty()){
+    ServerPlayer runner = server.getPlayerList().getPlayer(
+            game.getRunner()
+    );
+    if(runner !=null){
+        boolean farEnough=true;
+        for(var hunterUUID : game.getHunters()){
+            ServerPlayer hunter = server.getPlayerList().getPlayer(
+                    hunterUUID
+            );
+            if(hunter == null){
+                continue;
+            }
+             //for diff dimensions
+            if(hunter.level().dimension()!=runner.level().dimension()){
+                continue;
 
 
-            if (!game.isRunning() && game.getRunner() != null) {
-                ServerPlayer runner = server.getPlayerList().getPlayer(game.getRunner());
+            }
+            double distance = runner.distanceTo(hunter);
+            if(distance<15.0 ){
+                farEnough = false;
+                break;
+            }
+        }
+        if(farEnough){
+            game.start();
 
+            server.getPlayerList().broadcastSystemMessage(
+                    net.minecraft.network.chat.Component.literal(
+                            "MANHUNT STARTED!!"
+                    ),
+                    false
+            );
+            //gives the compass to the hunter afetr the start
+            for(var hunterUUID : game.getHunters()){
+                ServerPlayer hunter = server.getPlayerList().getPlayer(
+                        hunterUUID
+                );
+                if(hunter!=null){
+                    hunter.getInventory().add(
+                            ModItems.MANHUNT_COMPASS.getDefaultInstance()
+                    );
 
-                if (runner != null) {
-                    int runnerChunkX = runner.chunkPosition().x();
-                    int runnerChunkZ = runner.chunkPosition().z();
-                    if (runnerChunkX != game.getSpawnChunkX() || runnerChunkZ != game.getSpawnChunkZ()) {
-                        game.start();
-
-                        server.getPlayerList().broadcastSystemMessage
-                                (net.minecraft.network.chat.Component.literal
-                                                ("MANHUNT STARTED!!"),
-                                        false
-                                );
-
-                        for (var hunterUUID : game.getHunters()) {
-                            ServerPlayer hunter = server.getPlayerList().getPlayer(hunterUUID);
-                            if (hunter != null) {
-                                hunter.getInventory().add(net.bikash.manhunt.item.ModItems.MANHUNT_COMPASS.getDefaultInstance()
-                                );
-                            }
-                        }
-                    }
                 }
             }
+        }
+    }
+}
 
 
             if (!game.isRunning()) {
