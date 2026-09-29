@@ -188,7 +188,14 @@ if(!game.isRunning() && game.getRunner()!=null && !game.getHunters().isEmpty()){
                                         ("HUNTERSSS WINN!! \uD83D\uDE4C "),
                                 false
                         );
-                return;
+
+server.getPlayerList().broadcastSystemMessage(
+        net.minecraft.network.chat.Component.literal(
+                "Final Time:" + game.getFinalTimeFormatted()
+        ),
+        false
+);
+return;
             }
 
             for (var hunterUUID : game.getHunters()) {
