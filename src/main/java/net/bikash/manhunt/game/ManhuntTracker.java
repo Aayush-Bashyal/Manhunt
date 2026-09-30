@@ -12,16 +12,41 @@ import net.bikash.manhunt.network.ManhuntNetwork;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.item.ItemStack;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
+
 
 public class ManhuntTracker {
+    private static boolean hasPreviousRunnerPosition = false;
+
+    private static net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> previousRunnerDimension;
+
+    private static double previousRunnerX;
+    private static double previousRunnerY;
+    private static double previousRunnerZ;
+    private static boolean runnerInOtehrDimension = false;
 private static int hudCounter = 0;
     private static int tickcounter = 0;
     private static double runnerAngle = 0;
-
+    private static net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> portalDimension;
+    private static net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> runnerDimension;
+private static double portalX;
+private static double portalY;
+private static double portalZ;
     public static void register() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+//portal tracking
 
             ManhuntGame game = Manhunt.getGame(server);
+            if (game.getRunner()!=null){
+                ServerPlayer trackedRunner = server.getPlayerList().getPlayer(game.getRunner());
+
+                if(trackedRunner!=null){
+                    previousRunnerDimension = trackedRunner.level().dimension();
+                    previousRunnerX = trackedRunner.getX();
+                    previousRunnerY = trackedRunner.getY();
+                    previousRunnerZ = trackedRunner.getZ();
+                }
+            }
 
 hudCounter++;
 if(hudCounter>=5){
@@ -122,9 +147,16 @@ if(!game.isRunning() && game.getRunner()!=null && !game.getHunters().isEmpty()){
             if(hunter == null){
                 continue;
             }
-             //for diff dimensions
+             //for diff dimensions compass willtrack the portal
             if(hunter.level().dimension()!=runner.level().dimension()){
-                continue;
+                if(portalDimension!=null && hunter.level().dimension() == portalDimension){
+                    double dx = portalX - hunter.getX();
+                    double dz = portalZ - hunter.getZ();
+
+                    double angle = Math.toDegrees(
+                            Math.atan2(dz,dx)
+                    );
+                }
 
 
             }
@@ -239,6 +271,52 @@ return;
 
 
         });
+        ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(
+                (player, origin, destination)->{
+                    if(destination.getServer()==null){
+                        return;
+                    }
+                    ManhuntGame game = Manhunt.getGame(destination.getServer());
+
+                    if(!game.isRunning()){
+                        return;
+                    }
+                    if(game.getRunner()==null){
+                        return;
+                    }
+                    if(!player.getUUID().equals(game.getRunner())){
+                        runnerInOtehrDimension = true ;
+                        portalX=player.getX();
+                        portalY=player.getY();
+                        portalZ=player.getZ();
+                        portalDimension = previousRunnerDimension;
+                        runnerDimension = destination.dimension();
+
+                    }
+
+                    System.out.println(
+                            "RUNNER CHANGED DIMENSION!"
+                    );
+
+                    System.out.println(
+                            "From: " + origin.dimension().identifier()
+                    );
+
+                    System.out.println(
+                            "To: " + destination.dimension().identifier()
+                    );
+
+                    System.out.println(
+                            "Runner position: "
+                                    + player.getX()
+                                    + ", "
+                                    + player.getY()
+                                    + ", "
+                                    + player.getZ()
+                    );
+
+                }
+        );
 
 //this detectss enderdragonn death
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
