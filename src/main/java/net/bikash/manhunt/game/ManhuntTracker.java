@@ -13,7 +13,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.item.ItemStack;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
-
+import net.bikash.manhunt.network.ManhuntNetwork;
 
 public class ManhuntTracker {
     private static boolean hasPreviousRunnerPosition = false;
@@ -156,7 +156,19 @@ if(!game.isRunning() && game.getRunner()!=null && !game.getHunters().isEmpty()){
                     double angle = Math.toDegrees(
                             Math.atan2(dz,dx)
                     );
+                    double hunterYaw = hunter.getYRot();
+                    angle= angle=(hunterYaw - 90);
+                    angle = (angle + 360)%360;
+
+                    ServerPlayNetworking.send(hunter,new ManhuntNetwork(true,angle)
+                    );
+
+                }else{
+                    ServerPlayNetworking.send(
+                            hunter,new ManhuntNetwork(false,0)
+                    );
                 }
+                continue;
 
 
             }
