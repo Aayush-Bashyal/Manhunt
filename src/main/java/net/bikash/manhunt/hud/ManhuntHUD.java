@@ -47,6 +47,7 @@ public class ManhuntHUD {
     if(!running){
         return;
     }
+    //manhunt
     graphics.text(
             minecraft.font,
             "MANHUNT",
@@ -55,6 +56,8 @@ public class ManhuntHUD {
             0xFFFFFFFF,
             true
     );
+
+    //time
 long totalSeconds = elaspedTime/1000;
 
 long hours = totalSeconds/3600;
@@ -75,6 +78,17 @@ graphics.text(
         0xFFFFFFFF,
         true
 );
+//runner
+graphics.text(
+        minecraft.font,
+        "RUNNERS: "+runnerName,
+
+        10,
+        55,
+        0xFFFFFFFF,
+        true
+);
+//hunters
 graphics.text(
         minecraft.font,
         "HUNTERS:",
