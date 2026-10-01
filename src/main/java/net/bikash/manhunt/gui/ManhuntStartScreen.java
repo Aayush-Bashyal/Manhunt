@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 public class ManhuntStartScreen extends Screen {
 
 public  ManhuntStartScreen(){
+
     super(Component.literal("Manhunt"));
 }
 @Override
@@ -21,8 +22,32 @@ public  ManhuntStartScreen(){
             0,
             this.width,
             this.height,
-            0xCC000000
+            0x66000000
     );
+    int panewidth = 400;
+    int paneheight = 250;
+
+    int left = (this.width - panewidth)/2;
+    int top = (this.height-paneheight)/2;
+    int right = left + panewidth;
+    int bottom= top + paneheight;
+
+    graphics.fill(
+            left,
+            top,
+            right,
+            top+2,
+            0xFFFF5555
+    );
+
+    graphics.fill(
+            left,
+            bottom-2,
+            right,
+            bottom,
+            0xFFFF5555
+    );
+
     graphics.text(
             this.font,
             "LET'S PLAY",
