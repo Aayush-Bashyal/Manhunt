@@ -39,6 +39,22 @@ public  ManhuntStartScreen(){
                     ).build()
 
     );
+
+    this.addRenderableWidget(
+            Button.builder(
+                    Component.literal("START MANHUNT"),
+                    button -> {
+                        this.minecraft.setScreen(
+                                new ManhuntPlayerSelectScreen()
+                        );
+                    }
+            ).bounds(
+                    x,
+                    y+30,
+                    buttonwidth,
+                    buttonheight
+            ).build()
+    );
 }
     @Override
     public void extractRenderState(

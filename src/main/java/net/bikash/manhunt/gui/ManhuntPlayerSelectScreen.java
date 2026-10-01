@@ -12,10 +12,36 @@ public class ManhuntPlayerSelectScreen extends Screen {
 
     @Override
     protected void init(){
+
+
+
+
         int buttonwidth = 220;
         int buttonheight = 20;
 
         int x = (this.width-buttonwidth)/2;
+
+
+        //runner selection
+        this.addRenderableWidget(
+                Button.builder(
+                        Component.literal(
+                                this.minecraft.player.getName().getString()
+                        ),
+                        button -> {
+                            System.out.println("RUNNER SELECTED: " + this.minecraft.player.getName().getString());
+                        }
+                ).bounds(
+                        x,this.height/2-20,
+                        buttonwidth,
+                        buttonheight
+
+                        ).bounds(
+                                x,this.height/2-20,
+                        buttonwidth,
+                        buttonheight
+                ).build()
+        );
 
         // done button
 
@@ -71,15 +97,18 @@ public class ManhuntPlayerSelectScreen extends Screen {
                 top + 2,
                 0xFF55FF55
         );
+        String title = "SELECT PLAYERS";
+
         graphics.text(
                 this.font,
-                "SELECT PLAYERS",
-                this.width/2-this.font.width("SELECT PLAYERS")/2,
-                this.height/2-50,
+                title,
+                this.width / 2 - this.font.width(title) / 2,
+                top + 55,
                 0xFFFFFFFF,
                 true
         );
 
+//runner player
         graphics.text(
                 this.font,
                 "RUNNER",
@@ -89,11 +118,12 @@ public class ManhuntPlayerSelectScreen extends Screen {
                 true
         );
 
+
         graphics.text(
                 this.font,
                 "HUNTERS",
                 left + 40,
-                top + 120,
+                top + 130,
                 0xFFFF5555,
                 true
         );
