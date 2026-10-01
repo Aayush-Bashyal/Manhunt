@@ -6,6 +6,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class ManhuntPlayerSelectScreen extends Screen {
+
+
+    private String selectedrunner = null;
+
     public ManhuntPlayerSelectScreen (){
         super(Component.literal("Select Players"));
     }
@@ -16,32 +20,33 @@ public class ManhuntPlayerSelectScreen extends Screen {
 
 
 
-        int buttonwidth = 220;
+        int buttonwidth = 120;
         int buttonheight = 20;
 
         int x = (this.width-buttonwidth)/2;
 
 
         //runner selection
-        this.addRenderableWidget(
-                Button.builder(
-                        Component.literal(
-                                this.minecraft.player.getName().getString()
-                        ),
-                        button -> {
-                            System.out.println("RUNNER SELECTED: " + this.minecraft.player.getName().getString());
-                        }
-                ).bounds(
-                        x,this.height/2-20,
-                        buttonwidth,
-                        buttonheight
+     if(this.minecraft.getConnection()!=null){
+         int playerY = this.height/2-20;
+         for(var playerInfo : this.minecraft.getConnection().getOnlinePlayers()){
+             String name = playerInfo.getProfile().name();
 
-                        ).bounds(
-                                x,this.height/2-20,
-                        buttonwidth,
-                        buttonheight
-                ).build()
-        );
+             this.addRenderableWidget(
+                     Button.builder(
+                             Component.literal(name),
+                             button -> {
+                                 selectedrunner = name ;
+                                 System.out.println("RUNNER SELECTED: "+selectedrunner);
+                             }
+                     ).bounds(
+                             x,playerY,
+                             120,20
+                     ).build()
+             );
+             playerY += 25;
+         }
+     }
 
         // done button
 
@@ -103,7 +108,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
                 this.font,
                 title,
                 this.width / 2 - this.font.width(title) / 2,
-                top + 55,
+                top + 35,
                 0xFFFFFFFF,
                 true
         );
@@ -113,7 +118,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
                 this.font,
                 "RUNNER",
                 left + 40,
-                top + 70,
+                top + 60,
                 0xFF55FF55,
                 true
         );
@@ -123,10 +128,11 @@ public class ManhuntPlayerSelectScreen extends Screen {
                 this.font,
                 "HUNTERS",
                 left + 40,
-                top + 130,
+                top + 160,
                 0xFFFF5555,
                 true
         );
+
         super.extractRenderState(
                 graphics,
                 mouseX,
