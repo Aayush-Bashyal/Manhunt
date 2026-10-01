@@ -69,7 +69,7 @@ public  ManhuntStartScreen(){
                 top,
                 right,
                 top+2,
-                0xFFFF5555
+                0xFF55AA55
         );
 
         graphics.fill(
