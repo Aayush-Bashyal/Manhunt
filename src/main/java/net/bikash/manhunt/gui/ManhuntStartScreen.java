@@ -1,7 +1,10 @@
 package net.bikash.manhunt.gui;
 
+import com.llamalad7.mixinextras.sugar.Share;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.network.chat.Component;
 
 public class ManhuntStartScreen extends Screen {
@@ -63,6 +66,32 @@ public  ManhuntStartScreen(){
             this.height/2-30,
             0xFFFF5555,
             true
+    );
+}
+@Override
+    protected void init(){
+    int buttonwidth = 220;
+    int buttonheight = 20;
+
+    int x = (this.width - buttonwidth)/2;
+    int y = this.height /2 +20;
+
+    this.addRenderableWidget(
+            Button.builder(
+                    Component.literal("OPEN LAN WORLD"),
+                            button -> {
+                        this.minecraft.setScreen(
+                                new ShareToLanScreen(this)
+                        );
+                            }
+                            ).bounds(
+                                    x,
+                            y,
+                            buttonwidth,
+                            buttonheight
+
+                    ).build()
+
     );
 }
 }
