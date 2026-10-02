@@ -47,10 +47,13 @@ public class ManhuntPlayerSelectScreen extends Screen {
                              (name.equals(selectedrunner)?"[✓]" : "[ ]")+name),
 
                      button -> {
-                         selectedrunner = name;
-                         System.out.println(
-                                 "RUNNER SELECTED" + selectedrunner);
-
+                        if(name.equals(selectedrunner)){
+                            selectedrunner=null;
+                        }else{
+                            selectedrunner = name;
+                            selectedhunters.remove(name);
+                        }
+                        System.out.println("RUNNER SELECTED: "+selectedrunner);
                          //the screen refreshes so the chekbox updates
                          this.clearWidgets();
                          this.init();
@@ -116,7 +119,26 @@ public class ManhuntPlayerSelectScreen extends Screen {
                 Button.builder(
                         Component.literal("DONE"),
                         button -> {
+                            if(selectedrunner==null){
+                                System.out.println("NO RUNNER SELECTED!");
+                                return;
+                            }
+                            if(this.minecraft.getConnection()==null){
+                                return;
+                            }
+                            for(var playerInfo: this.minecraft.getConnection().getOnlinePlayers()){
+                                String name = playerInfo.getProfile().name();
+
+                                if (name.equals(selectedrunner)){
+                                    System.out.println("RUNNER UUID: "+playerInfo.getProfile().id());
+                                }
+                                if(selectedhunters.contains(name)){
+                                    System.out.println("HUNTER UUID: "+playerInfo.getProfile().id());
+                                }
+
+                            }
                             this.onClose();
+
                         }
                 ).bounds(
                         x,
