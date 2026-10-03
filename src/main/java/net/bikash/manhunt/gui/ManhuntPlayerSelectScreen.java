@@ -1,5 +1,7 @@
 package net.bikash.manhunt.gui;
 
+import net.bikash.manhunt.network.ManhuntRoleSelectionPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -89,7 +91,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
                 }
                 Button hunterButton= Button.builder(
                         Component.literal(
-                                (selectedhunters.contains(name)? "[✓]":"[ ]"+name )),
+                                (selectedhunters.contains(name)? "[✓]":"[ ]")+ name ),
                                 button -> {
                                     if(selectedhunters.contains(name)) {
                                         selectedhunters.remove(name);
@@ -101,7 +103,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
                                     this.clearWidgets();
                                     this.init();
                                 }
-                        ).bounds(
+                         ).bounds(
                                 x,
                                 hunterY,
                                 120,
@@ -126,17 +128,40 @@ public class ManhuntPlayerSelectScreen extends Screen {
                             if(this.minecraft.getConnection()==null){
                                 return;
                             }
-                            for(var playerInfo: this.minecraft.getConnection().getOnlinePlayers()){
+
+                            java.util.UUID runnerUUID = null;
+
+                            java.util.List<java.util.UUID> hunterUUIDs = new java.util.ArrayList<>();
+
+                            for(var playerInfo: this.minecraft.getConnection().getOnlinePlayers()) {
                                 String name = playerInfo.getProfile().name();
 
-                                if (name.equals(selectedrunner)){
-                                    System.out.println("RUNNER UUID: "+playerInfo.getProfile().id());
-                                }
-                                if(selectedhunters.contains(name)){
-                                    System.out.println("HUNTER UUID: "+playerInfo.getProfile().id());
-                                }
+                                java.util.UUID uuid = playerInfo.getProfile().id();
 
+                                //converting runner name into uuid
+
+                                if (name.equals(selectedrunner)) {
+                                    runnerUUID = uuid;
+                                }
+                                //convrting hunters name into uuids
+                                if (selectedhunters.contains(name)) {
+                                    hunterUUIDs.add(uuid);
+                                }
                             }
+                                if(runnerUUID==null){
+                                    System.out.println("RUNNER UUID NOT FOUND");
+                                    return;
+                                }
+                                System.out.println("RUNNER UUID: "+runnerUUID);
+                            System.out.print("HUNTER UUIDS: "+hunterUUIDs);
+
+                            ClientPlayNetworking.send(
+                                    new ManhuntRoleSelectionPayload(
+                                            runnerUUID,
+                                            hunterUUIDs
+                                    )
+                            );
+
                             this.onClose();
 
                         }

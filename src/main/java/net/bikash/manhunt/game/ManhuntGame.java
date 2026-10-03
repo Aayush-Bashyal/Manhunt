@@ -50,6 +50,10 @@ public List<UUID> getHunters(){
         return hunters;
 }
 
+public void clearHunters(){
+        hunters.clear();
+}
+
 public void finish(String winner){
         finalTime = getElapsedTime();
         this.winner = winner;

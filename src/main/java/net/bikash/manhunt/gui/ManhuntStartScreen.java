@@ -27,7 +27,7 @@ public  ManhuntStartScreen(){
                     Component.literal("OPEN LAN WORLD"),
                             button -> {
                         this.minecraft.setScreen(
-                                new ShareToLanScreen(new ManhuntPlayerSelectScreen())
+                                new ShareToLanScreen(this)
                         );
                             }
                             ).bounds(

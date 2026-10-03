@@ -6,14 +6,17 @@ import net.bikash.manhunt.game.ManhuntTracker;
 import net.bikash.manhunt.item.ModItems;
 import net.bikash.manhunt.network.ManhuntHUDNetwork;
 import net.bikash.manhunt.network.ManhuntNetwork;
+import net.bikash.manhunt.network.ManhuntRoleSelectionPayload;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.Identifier;
 
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.bikash.manhunt.network.ManhuntRoleSelectionPayload;
 
 public class Manhunt implements ModInitializer {
 
@@ -39,11 +42,34 @@ public class Manhunt implements ModInitializer {
 				ManhuntHUDNetwork.TYPE,
 				ManhuntHUDNetwork.CODEC
 		);
+		PayloadTypeRegistry.serverboundPlay().register(
+				ManhuntRoleSelectionPayload.TYPE,
+				ManhuntRoleSelectionPayload.CODEC
+		);
 
 
 		ManhuntTracker.register();
 		ManhuntCommands.register();
 		ModItems.initialize();
+
+		ServerPlayNetworking.registerGlobalReceiver(
+				ManhuntRoleSelectionPayload.TYPE,
+				(payload,context)->{
+					var server = context.server();
+					var game = Manhunt.getGame(server);
+
+					game.setRunner(payload.runner());
+					game.clearHunters();
+
+					for (var hunter : payload.hunters()){
+						game.addHunter(hunter);
+					}
+
+					System.out.println("RUNNER: " +payload.runner());
+
+					System.out.println("HUNTERS: "+payload.hunters());
+				}
+		);
 	}
 
 }
