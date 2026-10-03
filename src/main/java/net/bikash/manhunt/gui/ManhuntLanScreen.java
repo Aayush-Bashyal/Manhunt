@@ -21,7 +21,6 @@ public class ManhuntLanScreen extends Screen {
     private boolean commands;
     private int port;
 
-    private @Nullable EditBox portEdit;
 
     public ManhuntLanScreen(Screen lastScreen){
         super(Component.translatable("lanServer.title"));
@@ -69,18 +68,11 @@ public class ManhuntLanScreen extends Screen {
                             (button,value)->this.commands = value
                     )
     );
-    this.portEdit = new EditBox(
-            this.font,
-            this.width/2-75,
-            160,
-            150,
-            20,
-            Component.translatable("lanServer.port")
-            );
-    this.portEdit.setHint(
-            Component.literal(""+this.port)
-    );
-    this.addRenderableWidget(this.portEdit);
+
+
+
+
+
 
     Button startButton  = Button.builder(
             Component.translatable("lanServer.start"),
@@ -92,6 +84,9 @@ public class ManhuntLanScreen extends Screen {
                 )){
                     Component message = PublishCommand.getSuccessMessage(this.port);
 
+                    this.minecraft.gui.getChat().addClientSystemMessage(
+                            message
+                    );
                     this.minecraft.getNarrator().saySystemQueued(
                             message
                     );
@@ -150,13 +145,25 @@ public class ManhuntLanScreen extends Screen {
                 0xFFFFFFFF
 
         );
-        graphics.centeredText(
-                this.font,
-                Component.translatable("lanServer.otherPlayers"),
-                this.width/2,
-                82,
-                0xFFFFFFFF
-        );
+
+    graphics.centeredText(
+            this.font,
+            Component.translatable("selectWorld.gameMode"),
+            this.width / 2 - 80,
+            85,
+            0xFFFFFFFF
+    );
+
+    graphics.centeredText(
+            this.font,
+            Component.translatable("selectWorld.allowCommands"),
+            this.width / 2 + 80,
+            85,
+            0xFFFFFFFF
+    );
+
+
+
         graphics.centeredText(
                 this.font,
                 Component.translatable("lanServer.port"),
@@ -165,5 +172,13 @@ public class ManhuntLanScreen extends Screen {
                         0xFFFFFFFF
 
         );
+
+    graphics.centeredText(
+            this.font,
+            Component.literal(String.valueOf(this.port)),
+            this.width / 2,
+            160,
+            0xFFFFFFFF
+    );
 }
 }

@@ -64,7 +64,7 @@ public class ManhuntHUD {
 
         //panel
 
-        int panelwidth = 180;
+        int panelwidth = 120;
         int panelheight= 50;
 
         int left = (screenwidth-panelwidth)/2;
@@ -94,13 +94,13 @@ public class ManhuntHUD {
 
         //MANHUNT title
 
-        String title = "Manhunt";
+        String title = "MANHUNT";
 
         graphics.text(
                 minecraft.font,
                 title,
                 screenwidth/2-minecraft.font.width(title)/2,
-                top+8,
+                top+5,
                 0xFFFFFFFF,
                 true
 
@@ -114,7 +114,7 @@ public class ManhuntHUD {
                 minecraft.font,
                 time,
                 screenwidth/2-minecraft.font.width(time)/2,
-                top+27,
+                top+19,
                 0xFFFFFFFF,
                 true
         );
