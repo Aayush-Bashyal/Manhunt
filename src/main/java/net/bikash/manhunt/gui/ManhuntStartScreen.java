@@ -28,7 +28,7 @@ public  ManhuntStartScreen(){
                             button -> {
 
                         this.minecraft.setScreen(
-                                new ShareToLanScreen(this)
+                                new ManhuntLanScreen(this)
                         );
                             }
                             ).bounds(
