@@ -20,6 +20,13 @@ public class ManhuntGame {
     }
     public void start(){
 
+        if (running) {
+            return;
+        }
+
+if(runner ==null || hunters.isEmpty()){
+    return;
+}
         running = true;
         startTime  = System.currentTimeMillis();
     }

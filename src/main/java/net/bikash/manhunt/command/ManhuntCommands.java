@@ -2,6 +2,7 @@ package net.bikash.manhunt.command;
 import com.mojang.brigadier.CommandDispatcher;
 import net.bikash.manhunt.Manhunt;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -85,23 +86,87 @@ public class ManhuntCommands {
                     ManhuntGame game = Manhunt.getGame(
                             context.getSource().getServer()
                     );
-                            if (game.isRunning()) {
+                final    String[] runnerName = {"None"};
 
+                    if(game.getRunner()!=null){
+                        var runner = context.getSource()
+                                .getServer()
+                                .getPlayerList()
+                                .getPlayer(game.getRunner());
 
-                                context.getSource().sendSuccess(
-                                        () -> Component.literal("Manhunt is Currently running! "),
-                                        false
-                                );
+                        if(runner != null){
+                            runnerName[0] = runner.getName().getString();
+                        }
+                    }
+                    final StringBuilder hunters = new StringBuilder();
 
-                            } else {
+                    for (var hunterUUID :game.getHunters()){
+                        var hunter = context.getSource().getServer().getPlayerList().getPlayer(hunterUUID);
 
-                                context.getSource().sendSuccess(
-                                        () -> Component.literal("Manhunt is not Running!"),
-                                        false
-                                );
+                        if(hunter!=null){
+                            if(hunters.length()>0){
+                                hunters.append(", ");
                             }
-                            return 1;
-                        }))
+                            hunters.append(
+                                    hunter.getName().getString()
+                            );
+                        }
+                    }
+                    if(hunters.length()==0){
+                        hunters.append("None");
+                    }
+                    context.getSource().sendSuccess(
+                            ()-> Component.literal(
+                                    "MANHUNT STATUS"
+                            ),
+                            false
+                    );
+                    context.getSource().sendSuccess(
+                            () -> Component.literal("Status: "
+                            ).append(
+                                    Component.literal(game.isRunning() ? "RUNNING" : "NOT RUNNING").withStyle(
+                                            game.isRunning()
+                                                    ? ChatFormatting.GREEN
+                                                    : ChatFormatting.RED
+                                    )
+                            ),
+                    false
+                    );
+                    context.getSource().sendSuccess(
+                            ()-> Component.literal("Runner: ")
+                                    .append(
+                                            Component.literal(runnerName[0])
+                                                    .withStyle(ChatFormatting.YELLOW)
+                                    ),
+                            false
+                    );
+                    context.getSource().sendSuccess(
+                            ()-> Component.literal("Hunters: ")
+                                    .append(
+                                            Component.literal(hunters.toString())
+                                                    .withStyle(ChatFormatting.YELLOW)
+                                    ),
+                            false
+                    );
+
+                    if(game.isRunning()){
+                        long totalSeconds = game.getElapsedTime() / 1000;
+                        long minutes = totalSeconds / 60;
+                        long seconds = totalSeconds % 60;
+
+
+                        context.getSource().sendSuccess(
+                                ()-> Component.literal("Time: ")
+                                        .append(
+                                                Component.literal(
+                                                        String.format("%02d:%02d", minutes, seconds)
+                                                ).withStyle(ChatFormatting.BLACK)
+                                        ),
+                                false
+                        );
+                    }
+return 1;
+                } ))
 
                                 // /manhunt runner <player>
                                 .then(Commands.literal("runner")

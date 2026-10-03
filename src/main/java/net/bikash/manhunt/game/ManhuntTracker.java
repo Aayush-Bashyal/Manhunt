@@ -93,11 +93,9 @@ if(!game.isRunning() && game.getRunner()!=null && !game.getHunters().isEmpty()){
                     double dx = portalX - hunter.getX();
                     double dz = portalZ - hunter.getZ();
 
-                    double angle = Math.toDegrees(
-                            Math.atan2(dz,dx)
-                    );
+                    double angle = Math.toDegrees(Math.atan2(dz,dx));
                     double hunterYaw = hunter.getYRot();
-                    angle= angle=(hunterYaw - 90);
+                    angle= angle-(hunterYaw - 90);
                     angle = (angle + 360)%360;
 
                     ServerPlayNetworking.send(hunter,new ManhuntNetwork(true,angle)
@@ -236,11 +234,11 @@ return;
                     if(game.getRunner()==null){
                         return;
                     }
-                    if(!player.getUUID().equals(game.getRunner())){
+                    if(player.getUUID().equals(game.getRunner())){
                         runnerInOtehrDimension = true ;
-                        portalX=player.getX();
-                        portalY=player.getY();
-                        portalZ=player.getZ();
+                        portalX=previousRunnerX;
+                        portalY=previousRunnerY;
+                        portalZ=previousRunnerZ;
                         portalDimension = previousRunnerDimension;
                         runnerDimension = destination.dimension();
 
@@ -366,9 +364,13 @@ return;
                       return;
                     }
                     //gives the compass back to the hunters
-                    newPlayer.getInventory().add(
-                            ModItems.MANHUNT_COMPASS.getDefaultInstance()
-                    );
+if(!newPlayer.getInventory().contains(
+        ModItems.MANHUNT_COMPASS.getDefaultInstance()
+)){
+    newPlayer.getInventory().add(
+            ModItems.MANHUNT_COMPASS.getDefaultInstance()
+    );
+}
 
                 }
         );
