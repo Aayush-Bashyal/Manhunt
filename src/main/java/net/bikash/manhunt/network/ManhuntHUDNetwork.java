@@ -11,9 +11,8 @@ import net.minecraft.resources.Identifier;
 
 public record ManhuntHUDNetwork(
         boolean running,
-        long elapsedTime,
-        String runnerName,
-        String hunterNames
+        long elapsedTime
+
 ) implements CustomPacketPayload{
     public static final CustomPacketPayload.Type<ManhuntHUDNetwork> TYPE =
             new CustomPacketPayload.Type<>(
@@ -32,11 +31,6 @@ public record ManhuntHUDNetwork(
             ByteBufCodecs.VAR_LONG,
             ManhuntHUDNetwork::elapsedTime,
 
-            ByteBufCodecs.STRING_UTF8,
-            ManhuntHUDNetwork::runnerName,
-
-            ByteBufCodecs.STRING_UTF8,
-            ManhuntHUDNetwork::hunterNames,
 
           ManhuntHUDNetwork::new
 

@@ -31,8 +31,8 @@ public class ManhuntClientNetwork {
                     ManhuntHUD.update(
                             payload.running(),
                             payload.elapsedTime(),
-                            payload.runnerName(),
-                            payload.hunterNames()
+                           "",
+                            ""
                     );
                 }
         );

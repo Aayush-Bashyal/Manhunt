@@ -37,6 +37,27 @@ private static double portalZ;
 //portal tracking
 
             ManhuntGame game = Manhunt.getGame(server);
+
+            hudCounter++;
+                    if(hudCounter>=5){
+                        hudCounter=0;
+
+                        ManhuntHUDNetwork hudPacket = new ManhuntHUDNetwork(
+                                game.isRunning(),
+                                game.isRunning()
+                                ?game.getElapsedTime()
+                                        :game.getFinalTime()
+
+                        );
+
+                        for(ServerPlayer player: server.getPlayerList().getPlayers()){
+                            ServerPlayNetworking.send(
+                                    player,hudPacket
+                            );
+                        }
+                    }
+
+
             if (game.getRunner()!=null){
                 ServerPlayer trackedRunner = server.getPlayerList().getPlayer(game.getRunner());
 
@@ -48,89 +69,8 @@ private static double portalZ;
                 }
             }
 
-hudCounter++;
-if(hudCounter>=5){
-    hudCounter=0;
-    String runnerName = "";
 
-    if(game.getRunner()!=null){
-        ServerPlayer runner = server.getPlayerList().getPlayer(
-                game.getRunner()
-        );
 
-        if(runner!=null){
-            runnerName=runner.getName().getString();
-        }
-    }
-    StringBuilder hunterNames = new StringBuilder();
-
-    for(var hunterUUID:game.getHunters()){
-        ServerPlayer hunter = server.getPlayerList().getPlayer(hunterUUID);
-
-        if(hunter!=null){
-            if(hunterNames.length()>0){
-                hunterNames.append(",");
-            }
-            hunterNames.append(
-                    hunter.getName().getString()
-            );
-        }
-    }
-    ManhuntHUDNetwork hudPacket = new ManhuntHUDNetwork(
-            game.isRunning(),
-            game.isRunning()
-                    ? game.getElapsedTime()
-                    : game.getFinalTime(),
-            runnerName,
-            hunterNames.toString()
-
-            );
-    for(ServerPlayer player : server.getPlayerList().getPlayers()){
-        ServerPlayNetworking.send(
-                player,
-                hudPacket
-        );
-    }
-            }
-
-            //sends the HUD to every single player in the world
-            if(tickcounter%5==0){
-                String runnerName = "";
-                if(game.getRunner()!=null){
-                    ServerPlayer runner = server.getPlayerList().getPlayer(
-                            game.getRunner()
-                    );
-                    if(runner!=null){
-                        runnerName=runner.getName().getString();
-                    }
-                }
-
-                StringBuilder hunterNames = new StringBuilder();
-                for(var hunterUUID : game.getHunters()){
-                    ServerPlayer hunter = server.getPlayerList().getPlayer(hunterUUID);
-
-                    if(hunter!=null){
-                        if(hunterNames.length()>0){
-                            hunterNames.append(",");
-                        }
-                        hunterNames.append(hunter.getName().getString()
-                        );
-                    }
-                }
-                ManhuntHUDNetwork hudPacket = new ManhuntHUDNetwork(
-                        game.isRunning(),
-                        game.isRunning()
-                        ?game.getElapsedTime()
-                                :game.getFinalTime(),
-                        runnerName,
-                        hunterNames.toString()
-                );
-                for(ServerPlayer player:server.getPlayerList().getPlayers()){
-                    ServerPlayNetworking.send(
-                            player,hudPacket
-                    );
-                }
-            }
 
             //making that when the runner is 15 blocks far from the runner
 
