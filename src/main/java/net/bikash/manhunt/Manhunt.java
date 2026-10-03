@@ -63,6 +63,8 @@ public class Manhunt implements ModInitializer {
 
 					for (var hunter : payload.hunters()){
 						game.addHunter(hunter);
+
+						System.out.println("ROLES SAVED!");
 					}
 
 					System.out.println("RUNNER: " +payload.runner());

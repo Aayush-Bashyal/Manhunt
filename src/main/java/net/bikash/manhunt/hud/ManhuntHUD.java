@@ -39,78 +39,85 @@ public class ManhuntHUD {
             net.minecraft.client.gui.GuiGraphicsExtractor graphics,
             net.minecraft.client.DeltaTracker deltaTracker
     ){
-    Minecraft minecraft = Minecraft.getInstance();
+   Minecraft minecraft = Minecraft.getInstance();
+   if(minecraft.player == null){
+       return;
+   }
+   if(!running){
+       return;
+   }
+   int screenwidth = minecraft.getWindow().getGuiScaledWidth();
 
-    if(minecraft.player ==null){
-        return;
-        }
-    if(!running){
-        return;
-    }
-    //manhunt
-    graphics.text(
-            minecraft.font,
-            "MANHUNT",
-            10,
-            10,
-            0xFFFFFFFF,
-            true
-    );
+   //time
 
-    //time
-long totalSeconds = elaspedTime/1000;
+        long totalseconds = elaspedTime/1000;
+        long hours = totalseconds/3600;
+        long minutes = (totalseconds%3600)/60;
+        long seconds = totalseconds%60;
 
-long hours = totalSeconds/3600;
-long minutes = (totalSeconds % 3600)/60;
-long seconds = totalSeconds % 60;
+        String time = String.format(
+                "TIME:%02d:%02d:%02d",
+                hours,
+                minutes,
+                seconds
+        );
 
-String time =  String.format(
-        "TIME : %02d:%02d:%02d",
-        hours,
-        minutes,
-        seconds
-);
-graphics.text(
-        minecraft.font,
-        time,
-        10,
-        25,
-        0xFFFFFFFF,
-        true
-);
-//runner
-graphics.text(
-        minecraft.font,
-        "RUNNERS: "+runnerName,
+        //panel
 
-        10,
-        55,
-        0xFFFFFFFF,
-        true
-);
-//hunters
-graphics.text(
-        minecraft.font,
-        "HUNTERS:",
-        10,55,0xFFFFFFFF,
-        true
+        int panelwidth = 180;
+        int panelheight= 50;
 
-);
-String[] hunters = hunterNames.split(",");
-int y = 70;
-for(String hunter : hunters){
-    continue;
-}
-graphics.text(
-        minecraft.font,
-        hunterNames.trim(),
-        20,
-        y,
-        0xFFFFFFFF,
-        true
-);
-y+=15;
+        int left = (screenwidth-panelwidth)/2;
+        int top = 5;
+        int right = left + panelwidth;
+        int bottom = top +panelheight;
 
+        //bg
+
+        graphics.fill(
+                left,
+                top,
+                right,
+                bottom,
+                0xAA111111
+        );
+
+        //top border
+
+        graphics.fill(
+                left,
+                top,
+                right,
+                top+2,
+                0xFFFFFFFF
+        );
+
+        //MANHUNT title
+
+        String title = "Manhunt";
+
+        graphics.text(
+                minecraft.font,
+                title,
+                screenwidth/2-minecraft.font.width(title)/2,
+                top+8,
+                0xFFFFFFFF,
+                true
+
+
+        );
+
+
+        //time
+
+        graphics.text(
+                minecraft.font,
+                time,
+                screenwidth/2-minecraft.font.width(time)/2,
+                top+27,
+                0xFFFFFFFF,
+                true
+        );
 }
     }
 
