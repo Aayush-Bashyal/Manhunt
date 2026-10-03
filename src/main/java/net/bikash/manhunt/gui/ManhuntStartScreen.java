@@ -8,7 +8,7 @@ import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.network.chat.Component;
 
 public class ManhuntStartScreen extends Screen {
-    private boolean openinglan = false;
+
 public  ManhuntStartScreen(){
 
     super(Component.literal("Manhunt"));
@@ -26,7 +26,7 @@ public  ManhuntStartScreen(){
             Button.builder(
                     Component.literal("OPEN LAN WORLD"),
                             button -> {
-                        openinglan  = true;
+
                         this.minecraft.setScreen(
                                 new ShareToLanScreen(this)
                         );
@@ -121,18 +121,5 @@ public  ManhuntStartScreen(){
                 partialTick );
     }
 
-    @Override
-    public void onClose(){
-    if(openinglan){
-        openinglan = false;
 
-        if(this.minecraft!=null){
-            this.minecraft.setScreen(
-                    new ManhuntStartScreen()
-            );
-        }
-        return;
-    }
-    super.onClose();
-    }
 }

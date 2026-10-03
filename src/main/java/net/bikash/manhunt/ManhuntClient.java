@@ -6,7 +6,7 @@ import net.bikash.manhunt.gui.ManhuntStartScreen;
 import net.bikash.manhunt.hud.ManhuntHUD;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-
+import net.minecraft.client.gui.screens.ShareToLanScreen;
 public class ManhuntClient implements ClientModInitializer {
 private static boolean opened = false;
     @Override
