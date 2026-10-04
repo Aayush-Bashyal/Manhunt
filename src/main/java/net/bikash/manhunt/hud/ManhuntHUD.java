@@ -56,7 +56,7 @@ public class ManhuntHUD {
         long seconds = totalseconds%60;
 
         String time = String.format(
-                "TIME:%02d:%02d:%02d",
+                "TIME:%02d:%02d",
 
                 minutes,
                 seconds

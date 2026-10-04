@@ -116,9 +116,9 @@ public class ManhuntCommands {
                         hunters.append("None");
                     }
                     context.getSource().sendSuccess(
-                            ()-> Component.literal(
-                                    "MANHUNT STATUS"
-                            ),
+                            ()->Component.literal(
+                                    " MANHUNT STATUS "
+                            ).withStyle(ChatFormatting.GOLD),
                             false
                     );
                     context.getSource().sendSuccess(

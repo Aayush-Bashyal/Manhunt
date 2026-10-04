@@ -14,6 +14,18 @@ public class ManhuntPlayerSelectScreen extends Screen {
     private final java.util.Set<String> selectedhunters =
             new java.util.HashSet<>();
     private int refreshtimer = 0;
+    private int scroolOffset = 0;
+    private int maxScrool = 0;
+    private int scrollTop;
+    private int scrollBottom;
+    private int panelLeft;
+    private int panelRight;
+
+    private boolean draggingScrollbar = false;
+    private int dragStartY = 0;
+    private int dragStartScrollOffset = 0;
+    private String errorMessage = "";
+
 
     private java.util.Set<String> proviousPlayers = new java.util.HashSet<>();
 
@@ -27,28 +39,81 @@ public class ManhuntPlayerSelectScreen extends Screen {
     @Override
     protected void init(){
 
+int panelwidth = 400;
+int panelheight = 300;
 
+int left = (this.width - panelwidth)/2;
+int top = (this.height - panelheight)/2;
 
+        panelLeft = left;
+        panelRight = left + panelwidth;
 
-        int buttonwidth = 120;
+        int buttonwidth = 140;
         int buttonheight = 20;
 
 
-        int x = (this.width-buttonwidth)/2;
+        int x = left+40;
 
+        int runnerstartY = top+82;
+        int hunterstartY = top+182;
+
+        int runnermaxY = top+155;
+        int huntermaxY = top+panelheight-65;
+
+        int scrollTop = top+75;
+        int scrollBottom = top+panelheight-55;
+
+        //calculating how far we can scroll
+
+        int totalPlayers = 0;
+        if(this.minecraft.getConnection()!=null){
+            totalPlayers = this.minecraft.getConnection().getOnlinePlayers().size();
+        }
+int visiblePlayers = 6;
+
+        maxScrool = Math.max( 0,
+                (totalPlayers-visiblePlayers)*25
+        );
+
+        if(scroolOffset > maxScrool){
+            scroolOffset = maxScrool;
+        }
 
         //runner selection
      if(this.minecraft.getConnection()!=null){
 
-         int playerY = (this.height - 300) / 2 + 78;
+         int playerY = runnerstartY-scroolOffset;
+         int hunterY = hunterstartY - scroolOffset;
 
          for(var playerInfo : this.minecraft.getConnection().getOnlinePlayers()) {
+
+             if(playerY > runnermaxY){
+                 break;
+             }
+
+             if(hunterY > huntermaxY){
+                 break;
+             }
+
+
+
              String name = playerInfo.getProfile().name();
+
+             if(selectedhunters.contains(name)){
+                 continue;
+             }
+
+             if(playerY + buttonheight < scrollTop || playerY > scrollBottom){
+                 playerY += 25;
+                 continue;
+             }
+
              Button runnerButton = Button.builder(
                      Component.literal(
                              (name.equals(selectedrunner)?"[✓]" : "[ ]")+name),
 
                      button -> {
+                         errorMessage = "";
                         if(name.equals(selectedrunner)){
                             selectedrunner=null;
                         }else{
@@ -77,11 +142,15 @@ public class ManhuntPlayerSelectScreen extends Screen {
      //hunters selection
 
         if(this.minecraft.getConnection()!=null){
-            int hunterY = (this.height - 300)/2 + 178;
+            int hunterY = hunterstartY-scroolOffset;
 
 
             for( var playerInfo : this.minecraft.getConnection().getOnlinePlayers()){
                 String name = playerInfo.getProfile().name();
+
+                if (hunterY > huntermaxY) {
+                    break;
+                }
 
                 //not both runner and hunter means a runner cannot be a  hunter
 
@@ -89,15 +158,28 @@ public class ManhuntPlayerSelectScreen extends Screen {
                 if(name.equals(selectedrunner)){
                     continue;
                 }
+
+                if(hunterY + buttonheight < scrollTop || hunterY >scrollBottom){
+                    hunterY+=25;
+                    continue;
+                }
+
                 Button hunterButton= Button.builder(
                         Component.literal(
                                 (selectedhunters.contains(name)? "[✓]":"[ ]")+ name ),
                                 button -> {
+
+                                    errorMessage = "";
+
                                     if(selectedhunters.contains(name)) {
                                         selectedhunters.remove(name);
                                     }
                                     else{
                                         selectedhunters.add(name);
+
+                                        if(name.equals(selectedrunner)){
+                                            selectedrunner = null;
+                                        }
                                     }
                                     System.out.print("HUNTERS: "+selectedhunters);
                                     this.clearWidgets();
@@ -122,9 +204,18 @@ public class ManhuntPlayerSelectScreen extends Screen {
                         Component.literal("DONE"),
                         button -> {
                             if(selectedrunner==null){
-                                System.out.println("NO RUNNER SELECTED!");
+                                errorMessage = "Please select a Runner!";
                                 return;
                             }
+
+
+
+                            if(selectedhunters.isEmpty()){
+                                errorMessage = "Please select at least one Hunter!";
+                                return;
+                            }
+
+
                             if(this.minecraft.getConnection()==null){
                                 return;
                             }
@@ -144,6 +235,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
                                     runnerUUID = uuid;
                                 }
                                 //convrting hunters name into uuids
+
                                 if (selectedhunters.contains(name)) {
                                     hunterUUIDs.add(uuid);
                                 }
@@ -167,7 +259,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
                         }
                 ).bounds(
                         x,
-                        this.height /2 +60,
+                      top+panelheight-35,
                         buttonwidth,
                         buttonheight
                 ).build()
@@ -200,27 +292,68 @@ public class ManhuntPlayerSelectScreen extends Screen {
     }
 
 
+    //mouse wheel scrolling funcction:
+
+
+@Override
+public boolean mouseScrolled(
+        double mouseX,
+        double mouseY,
+        double scrollX,
+        double scrollY
+){
+
+        int panelwidth = 400;
+        int panelheight = 300;
+
+        int left = (this.width-panelwidth)/2;
+        int top = (this.height - panelheight)/2;
+
+        int scrollTop = top +75;
+        int scrollBotoom = top + panelheight-55;
+
+        if(mouseX<left|| mouseX>left+panelwidth || mouseY < scrollTop || mouseY > scrollBotoom){
+
+            return false;
+        }
+
+        scroolOffset -= (int) (scrollY *15);
+
+        if(scroolOffset<0){
+            scroolOffset=0;
+        }
+        if(scroolOffset<0){
+            scroolOffset=0;
+        }
+        if(scroolOffset>maxScrool){
+            scroolOffset=maxScrool;
+        }
+        this.clearWidgets();
+        this.init();
+        return true;
+}
+
     @Override
     public void extractRenderState(
             GuiGraphicsExtractor graphics,
             int mouseX,
             int mouseY,
             float partialTick
-    ){
+    ) {
         //making the bg dark
 
         graphics.fill(
-                0,0,this.width,this.height,  0x66000000
+                0, 0, this.width, this.height, 0x66000000
         );
 
 //panel
         int panelwidth = 400;
         int panelheight = 300;
 
-        int left = (this.width - panelwidth)/2;
-        int top = (this.height - panelheight)/2;
+        int left = (this.width - panelwidth) / 2;
+        int top = (this.height - panelheight) / 2;
         int right = left + panelwidth;
-        int bottom = top+panelheight;
+        int bottom = top + panelheight;
 
         graphics.fill(
                 left,
@@ -269,12 +402,37 @@ public class ManhuntPlayerSelectScreen extends Screen {
                 true
         );
 
+        if (!errorMessage.isEmpty()) {
+            graphics.text(
+                    this.font,
+                    errorMessage,
+                    left + 40,
+                    top + panelheight - 55,
+                    0xFFFF5555,
+                    true
+            );
+        }
+
+        graphics.enableScissor(
+                left,
+                scrollTop,
+                right,
+                scrollBottom
+
+        );
+
         super.extractRenderState(
                 graphics,
                 mouseX,
                 mouseY,
                 partialTick
         );
+
+
+        graphics.disableScissor();
+
+
     }
+
 
     }
