@@ -9,6 +9,11 @@ import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.network.chat.Component;
 
 public class ManhuntStartScreen extends Screen {
+@Override
+public boolean shouldCloseOnEsc()
+{
+    return true;
+}
 
 public  ManhuntStartScreen(){
 
@@ -54,7 +59,6 @@ public  ManhuntStartScreen(){
     ).build()
     );
 }
-
 
 
     @Override
@@ -103,16 +107,16 @@ public  ManhuntStartScreen(){
         graphics.text(
                 this.font,
                 "LET'S PLAY",
-                this.width/2-this.font.width("LET'S PLAY")/2,
-                this.height/2-50,
+                (int) ((this.width / 2.0f - this.font.width("LET'S PLAY") / 2.0f) / 1.5f),
+                (int) ((this.height / 2.0f - 50) / 1.5f),
                 0xFFFFFFFF,
                 true
         );
         graphics.text(
                 this.font,
                 "MANHUNT",
-                this.width/2-this.font.width("MANHUNT")/2,
-                this.height/2-30,
+                (int) ((this.width / 2.0f - this.font.width("MANHUNT") / 2.0f) / 1.5f),
+                (int) ((this.height / 2.0f - 30) / 1.5f),
                 0xFFFF5555,
                 true
         );
