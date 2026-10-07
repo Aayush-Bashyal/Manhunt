@@ -37,6 +37,13 @@ public class ManhuntCommands {
                             context.getSource().getServer()
                     );
 
+                    ServerPlayer sourcePlayer = context.getSource().getPlayer();
+
+                    if(sourcePlayer == null || !game.isAdmin(sourcePlayer.getUUID())){
+                        context.getSource().sendFailure(Component.literal("You are not a Manhunt Admin!"));
+                        return 0;
+                    }
+
                     if (game.isRunning()) {
                         context.getSource().sendSuccess(
                                 () -> Component.literal("Manhunt is Currently running"),
@@ -65,8 +72,18 @@ public class ManhuntCommands {
                 .then(Commands.literal("stop").executes(context -> {
                     ManhuntGame game = Manhunt.getGame(
                             context.getSource().getServer()
+
+
                     );
-                            if (!game.isRunning()) {
+
+                    ServerPlayer sourcePlayer = context.getSource().getPlayer();
+
+                    if(sourcePlayer == null || !game.isAdmin(sourcePlayer.getUUID())){
+                        context.getSource().sendFailure(Component.literal("You are not a Manhunt Admin!"));
+                        return 0;
+                    }
+
+                    if (!game.isRunning()) {
                                 context.getSource().sendSuccess(
                                         () -> Component.literal("Manhunt is not running!"),
                                         false
@@ -175,7 +192,15 @@ return 1;
                                                     ManhuntGame game = Manhunt.getGame(
                                                             context.getSource().getServer()
                                                     );
-                                                            ServerPlayer player = EntityArgument.getPlayer(
+
+                                                    ServerPlayer sourcePlayer = context.getSource().getPlayer();
+
+                                                    if(sourcePlayer == null || !game.isAdmin(sourcePlayer.getUUID())){
+                                                        context.getSource().sendFailure(Component.literal("You are not a Manhunt Admin!"));
+                                                        return 0;
+                                                    }
+
+                                                    ServerPlayer player = EntityArgument.getPlayer(
                                                                     context, "player"
                                                             );
 
@@ -209,7 +234,15 @@ return 1;
                                                             context.getSource().getServer()
                                                     );
 
-                                                            ServerPlayer player = EntityArgument.getPlayer(
+                                                    ServerPlayer sourcePlayer = context.getSource().getPlayer();
+
+                                                    if(sourcePlayer == null || !game.isAdmin(sourcePlayer.getUUID())){
+                                                        context.getSource().sendFailure(Component.literal("You are not a Manhunt Admin!"));
+                                                        return 0;
+                                                    }
+
+
+                                                    ServerPlayer player = EntityArgument.getPlayer(
                                                                     context, "player"
                                                             );
                                                             game.addHunter(player.getUUID());
@@ -231,6 +264,14 @@ return 1;
                                             ManhuntGame game = Manhunt.getGame(
                                                     context.getSource().getServer()
                                             );
+
+                                            ServerPlayer sourcePlayer = context.getSource().getPlayer();
+
+                                            if(sourcePlayer == null || !game.isAdmin(sourcePlayer.getUUID())){
+                                                context.getSource().sendFailure(Component.literal("You are not a Manhunt Admin!"));
+                                                return 0;
+                                            }
+
 
                                             ServerPlayer player = EntityArgument.getPlayer(context,"player");
                                          boolean removed = game.removeHunter(player.getUUID());
@@ -262,6 +303,14 @@ return 1;
                                     ManhuntGame game = Manhunt.getGame(
                                             context.getSource().getServer()
                                     );
+
+                                    ServerPlayer sourcePlayer = context.getSource().getPlayer();
+
+                                    if(sourcePlayer == null || !game.isAdmin(sourcePlayer.getUUID())){
+                                        context.getSource().sendFailure(Component.literal("You are not a Manhunt Admin!"));
+                                        return 0;
+                                    }
+
 
                                     ServerPlayer player = EntityArgument.getPlayer(context,"player");
                                    if (game.getRunner() !=null && game.getRunner().equals(player.getUUID())){
