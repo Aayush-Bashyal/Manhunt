@@ -8,6 +8,7 @@ public class ManhuntGame {
     private boolean running = false;
     private UUID runner;
     private final List<UUID> hunters = new ArrayList<>();
+    private final List<UUID> admins = new ArrayList<>();
     private long startTime;
     private long finalTime;
     private String winner;
@@ -105,4 +106,21 @@ public int getSpawnChunkX(){
 public int getSpawnChunkZ(){
         return spawnChunkZ;
 }
+public void addAdmin(UUID player){
+        if(!admins.contains(player)){
+            admins.add(player);
+        }
+}
+public boolean removeAdmin(UUID player){
+        return admins.remove(player);
+}
+
+public boolean isAdmin(UUID player){
+        return admins.contains(player);
+}
+public List<UUID> getAdmins(){
+        return admins;
+}
+
+
 }

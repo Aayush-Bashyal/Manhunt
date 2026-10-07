@@ -10,6 +10,7 @@ import net.bikash.manhunt.network.ManhuntRoleSelectionPayload;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.Identifier;
 
@@ -52,11 +53,31 @@ public class Manhunt implements ModInitializer {
 		ManhuntCommands.register();
 		ModItems.initialize();
 
+		ServerPlayConnectionEvents.JOIN.register(
+				(handler,sender,server)->{
+					var game = Manhunt.getGame(server);
+					var player = handler.getPlayer();
+
+					if(game.getAdmins().isEmpty()){
+						game.addAdmin(player.getUUID());
+
+						System.out.println("MANHUNT ADMIN: "+player.getName().getString());
+					}
+
+					
+				}
+		);
+
 		ServerPlayNetworking.registerGlobalReceiver(
 				ManhuntRoleSelectionPayload.TYPE,
 				(payload,context)->{
 					var server = context.server();
 					var game = Manhunt.getGame(server);
+					var player = context.player();
+
+					if(!game.isAdmin(player.getUUID())){
+						return;
+					}
 
 					game.setRunner(payload.runner());
 					game.clearHunters();

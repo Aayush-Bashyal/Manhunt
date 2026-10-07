@@ -291,8 +291,78 @@ return 1;
 
                                 })))
 
+                        .then(Commands.literal("admin").executes(context -> {
+                            ManhuntGame game = Manhunt.getGame(context.getSource().getServer());
 
-        );
+                            context.getSource().sendSuccess(
+                                    ()-> Component.literal(
+                                            "Manhunt Admins: " + game.getAdmins().size()
+                                    ).withStyle(ChatFormatting.GOLD),
+                                    false
+                            );
+                            return 1;
+
+                        })
+                        //.manhunt admin add player
+                                        .then(Commands.literal("add")
+                                                .then(Commands.argument("player", EntityArgument.player())
+                                                        .executes(context -> {
+                                                            ManhuntGame game = Manhunt.getGame(context.getSource().getServer());
+
+                                                           ServerPlayer sourcePlayer = context.getSource().getPlayer();
+
+                                                           if(sourcePlayer == null || !game.isAdmin(sourcePlayer.getUUID())){
+                                                                                context.getSource().sendFailure(
+                                                        Component.literal("You are not a Manhunt Admin!")
+                                                );
+                                                return 0;
+                                                           }
+                                                           ServerPlayer player = EntityArgument.getPlayer(context,"player");
+
+                                                            game.addAdmin(player.getUUID());
+                                                            context.getSource().sendSuccess(
+                                                                    ()-> Component.literal(
+                                                                            player.getName().getString() + " is now a Manhunt Admin!"
+                                                                    ).withStyle(ChatFormatting.GREEN),
+                                                                    false
+                                                            );
+                                                            return 1;
+                                                        })) )
+
+                                        .then(Commands.literal("remove")
+                                                .then(Commands.argument("player",EntityArgument.player())
+                                                        .executes(context -> {
+                                                            ManhuntGame game = Manhunt.getGame(
+                                                                    context.getSource().getServer()
+                                                            );
+                                                            ServerPlayer sourcePlayer = context.getSource().getPlayer();
+
+                                                            if(sourcePlayer == null|| !game.isAdmin(sourcePlayer.getUUID())){
+                                                                context.getSource().sendFailure(
+                                                                        Component.literal("You are not a Manhunt Admin!")
+                                                                );
+                                                                return 0 ;
+                                                            }
+                                                            ServerPlayer player = EntityArgument.getPlayer(
+                                                                    context,"player"
+                                                            );
+                                                            boolean removed = game.removeAdmin(player.getUUID());
+
+                                                            if(removed){
+                                                                context.getSource().sendSuccess(
+                                                                        ()-> Component.literal(player.getName().getString() + "is no longer a Manhunt Admin!").withStyle(ChatFormatting.YELLOW),
+                                                                        false
+                                                                );
+                                                            }else {
+                                                                context.getSource().sendFailure(
+                                                                        Component.literal(player.getName().getString()+" is not a Manhunt Admin!")
+                                                                );
+                                                            }
+                                                            return 1;
+                                                        })))
+                        ));
+
+
 
 
     }
