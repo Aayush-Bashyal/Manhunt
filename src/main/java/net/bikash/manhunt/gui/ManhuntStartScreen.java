@@ -22,28 +22,11 @@ public  ManhuntStartScreen(){
     int x = (this.width - buttonwidth)/2;
     int y = this.height / 2 +20;
 
-    this.addRenderableWidget(
-            Button.builder(
-                    Component.literal("OPEN LAN WORLD"),
-                            button -> {
 
-                        this.minecraft.setScreen(
-                                new ManhuntLanScreen(this)
-                        );
-                            }
-                            ).bounds(
-                                    x,
-                            y,
-                            buttonwidth,
-                            buttonheight
-
-                    ).build()
-
-    );
 
     this.addRenderableWidget(
             Button.builder(
-                    Component.literal("START MANHUNT"),
+                    Component.literal("Player Selection"),
                     button -> {
                         this.minecraft.setScreen(
                                 new ManhuntPlayerSelectScreen()
@@ -97,6 +80,9 @@ public  ManhuntStartScreen(){
                 0xFFFF5555
         );
 
+        graphics.pose().pushMatrix();
+        graphics.pose().scale(1.5f,1.5f);
+
         graphics.text(
                 this.font,
                 "LET'S PLAY",
@@ -113,6 +99,7 @@ public  ManhuntStartScreen(){
                 0xFFFF5555,
                 true
         );
+        graphics.pose().popMatrix();
 
         super.extractRenderState( graphics,
 
