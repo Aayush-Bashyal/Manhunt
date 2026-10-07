@@ -1,5 +1,6 @@
 package net.bikash.manhunt.client;
 import net.bikash.manhunt.hud.ManhuntHUD;
+import net.bikash.manhunt.network.ManhuntAdminNetwork;
 import net.bikash.manhunt.network.ManhuntHUDNetwork;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.client.Minecraft;
@@ -25,6 +26,7 @@ public class ManhuntClientNetwork {
                 }
         );
 
+
         ClientPlayNetworking.registerGlobalReceiver(
                 ManhuntHUDNetwork.TYPE,
                 (payload, context)->{
@@ -33,9 +35,18 @@ public class ManhuntClientNetwork {
                             payload.elapsedTime(),
                            "",
                             ""
+
+
                     );
                 }
         );
+
+        ClientPlayNetworking.registerGlobalReceiver(ManhuntAdminNetwork.TYPE,(payload, context) -> {
+
+                ManhuntAdminNetwork.isAdmin = payload.admin();
+            }
+        );
+
     }
     public static void updateCompassModel() {
         Minecraft minecraft = Minecraft.getInstance();

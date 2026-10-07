@@ -4,9 +4,7 @@ import net.bikash.manhunt.command.ManhuntCommands;
 import net.bikash.manhunt.game.ManhuntGame;
 import net.bikash.manhunt.game.ManhuntTracker;
 import net.bikash.manhunt.item.ModItems;
-import net.bikash.manhunt.network.ManhuntHUDNetwork;
-import net.bikash.manhunt.network.ManhuntNetwork;
-import net.bikash.manhunt.network.ManhuntRoleSelectionPayload;
+import net.bikash.manhunt.network.*;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -17,7 +15,6 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.bikash.manhunt.network.ManhuntRoleSelectionPayload;
 
 public class Manhunt implements ModInitializer {
 
@@ -47,6 +44,10 @@ public class Manhunt implements ModInitializer {
 				ManhuntRoleSelectionPayload.TYPE,
 				ManhuntRoleSelectionPayload.CODEC
 		);
+		PayloadTypeRegistry.clientboundPlay().register(
+				ManhuntAdminNetwork.TYPE,
+				ManhuntAdminNetwork.CODEC
+		);
 
 
 		ManhuntTracker.register();
@@ -63,6 +64,9 @@ public class Manhunt implements ModInitializer {
 
 						System.out.println("MANHUNT ADMIN: "+player.getName().getString());
 					}
+					boolean isAdmin = game.isAdmin(player.getUUID());
+
+					ServerPlayNetworking.send(player,new ManhuntAdminNetwork(isAdmin));
 
 					
 				}

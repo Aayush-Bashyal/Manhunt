@@ -9,6 +9,8 @@ import net.minecraft.resources.Identifier;
 
 public record ManhuntAdminNetwork(boolean admin)
     implements CustomPacketPayload {
+    public static boolean isAdmin = false;
+
         public static final Identifier ID = Identifier.fromNamespaceAndPath("manhunt", "admin");
 
         public static final Type<ManhuntAdminNetwork> TYPE = new Type<>(ID);

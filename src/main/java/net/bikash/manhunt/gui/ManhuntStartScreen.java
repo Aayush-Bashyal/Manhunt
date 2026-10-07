@@ -1,6 +1,7 @@
 package net.bikash.manhunt.gui;
 
 import com.llamalad7.mixinextras.sugar.Share;
+import net.bikash.manhunt.network.ManhuntAdminNetwork;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -15,31 +16,47 @@ public  ManhuntStartScreen(){
 }
 
 @Override
-    protected void init(){
+    protected void init() {
     int buttonwidth = 220;
     int buttonheight = 20;
 
-    int x = (this.width - buttonwidth)/2;
-    int y = this.height / 2 +20;
+    int x = (this.width - buttonwidth) / 2;
+    int y = this.height / 2 + 20;
 
 
+    if (ManhuntAdminNetwork.isAdmin) {
+        this.addRenderableWidget(
+                Button.builder(
+                        Component.literal("Player Selection"),
+                        button -> {
+                            this.minecraft.setScreen(
+                                    new ManhuntPlayerSelectScreen()
+                            );
+                        }
+                ).bounds(
+                        x,
+                        y + 30,
+                        buttonwidth,
+                        buttonheight
+                ).build()
+        );
+    }
+    this.addRenderableWidget(Button.builder(
+            Component.literal("Start Manhunt"),
+            button->{
 
-    this.addRenderableWidget(
-            Button.builder(
-                    Component.literal("Player Selection"),
-                    button -> {
-                        this.minecraft.setScreen(
-                                new ManhuntPlayerSelectScreen()
-                        );
-                    }
-            ).bounds(
-                    x,
-                    y+30,
-                    buttonwidth,
-                    buttonheight
-            ).build()
+            }
+    ).bounds(
+            x,
+            y+60,
+            buttonwidth,
+            buttonheight
+    ).build()
     );
 }
+
+
+
     @Override
     public void extractRenderState(
             GuiGraphicsExtractor graphics,
