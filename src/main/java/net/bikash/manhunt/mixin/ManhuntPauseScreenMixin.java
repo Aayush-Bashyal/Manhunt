@@ -24,7 +24,7 @@ public abstract class ManhuntPauseScreenMixin {
 
 
 
-    @Inject (method="init", at= @At("TAIL"))
+    @Inject (method="createPauseMenu", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/layouts/GridLayout;arrangeElements()V"))
    private void addManhuntButton(CallbackInfo ci) {
         if (!ManhuntAdminNetwork.isAdmin) {
                         return ;
@@ -40,9 +40,10 @@ public abstract class ManhuntPauseScreenMixin {
 
                         )
                 ).bounds(
-                        10,
-                        10,
-                        120,
+                        (Minecraft.getInstance().getWindow().getGuiScaledWidth()-204)/2,
+
+                        Minecraft.getInstance().getWindow().getGuiScaledHeight() - 30,
+                        204,
                         20
                 ).build()
         );
