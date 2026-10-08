@@ -5,11 +5,13 @@ import net.bikash.manhunt.network.ManhuntAdminNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -21,15 +23,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ManhuntPauseScreenMixin {
 
 
-    @Inject (method="createPauseMenu", at= @At("TAIL"))
+
+    @Inject (method="init", at= @At("TAIL"))
    private void addManhuntButton(CallbackInfo ci) {
         if (!ManhuntAdminNetwork.isAdmin) {
                         return ;
         }
 
-        PauseScreen screen = (PauseScreen)(Object) this;
+        ScreenAccessor screen = (ScreenAccessor) (Object) this;
 
-        ((ScreenAccess) screen).manhunt$addButton(
+        screen.manhunt$addRenderableWidget(
                 Button.builder(
                         net.minecraft.network.chat.Component.literal("Player Selection"),
                         button -> Minecraft.getInstance().setScreen(
@@ -46,7 +49,5 @@ public abstract class ManhuntPauseScreenMixin {
 
 
     }
-    public interface ScreenAccess {
-        void manhunt$addButton(Button button);
-    }
+
 }
