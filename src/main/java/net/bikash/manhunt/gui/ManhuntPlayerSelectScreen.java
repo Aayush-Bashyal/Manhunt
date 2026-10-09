@@ -16,14 +16,11 @@ public class ManhuntPlayerSelectScreen extends Screen {
     private int refreshtimer = 0;
     private int scroolOffset = 0;
     private int maxScrool = 0;
-    private int scrollTop;
     private int scrollBottom;
     private int panelLeft;
     private int panelRight;
 
-    private boolean draggingScrollbar = false;
-    private int dragStartY = 0;
-    private int dragStartScrollOffset = 0;
+
     private String errorMessage = "";
 
 
@@ -39,7 +36,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
     @Override
     protected void init(){
 
-int panelwidth = 400;
+int panelwidth = 800;
 int panelheight = 300;
 
 int left = (this.width - panelwidth)/2;
@@ -69,7 +66,7 @@ int top = (this.height - panelheight)/2;
         if(this.minecraft.getConnection()!=null){
             totalPlayers = this.minecraft.getConnection().getOnlinePlayers().size();
         }
-int visiblePlayers = 6;
+int visiblePlayers = 3;
 
         maxScrool = Math.max( 0,
                 (totalPlayers-visiblePlayers)*25
@@ -259,7 +256,7 @@ int visiblePlayers = 6;
                         }
                 ).bounds(
                         x,
-                      top+panelheight-35,
+                      top+panelheight-40,
                         buttonwidth,
                         buttonheight
                 ).build()
@@ -319,16 +316,10 @@ public boolean mouseScrolled(
 
         scroolOffset -= (int) (scrollY *15);
 
-        if(scroolOffset<0){
-            scroolOffset=0;
-        }
-        if(scroolOffset<0){
-            scroolOffset=0;
-        }
-        if(scroolOffset>maxScrool){
-            scroolOffset=maxScrool;
-        }
-        this.clearWidgets();
+    scroolOffset = Math.max(0, scroolOffset);
+    scroolOffset = Math.min(maxScrool, scroolOffset);
+
+    this.clearWidgets();
         this.init();
         return true;
 }
@@ -413,13 +404,7 @@ public boolean mouseScrolled(
             );
         }
 
-        graphics.enableScissor(
-                left,
-                scrollTop,
-                right,
-                scrollBottom
 
-        );
 
         super.extractRenderState(
                 graphics,
@@ -429,7 +414,7 @@ public boolean mouseScrolled(
         );
 
 
-        graphics.disableScissor();
+
 
 
     }
