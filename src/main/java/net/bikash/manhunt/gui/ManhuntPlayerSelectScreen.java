@@ -13,6 +13,8 @@ public class ManhuntPlayerSelectScreen extends Screen {
     private String selectedrunner = null;
     private final java.util.Set<String> selectedhunters =
             new java.util.HashSet<>();
+    private final java.util.Set<String> selectedspectators =
+            new java.util.HashSet<>();
     private int refreshtimer = 0;
     private int scroolOffset = 0;
     private int maxScrool = 0;
@@ -45,11 +47,15 @@ int top = (this.height - panelheight)/2;
         panelLeft = left;
         panelRight = left + panelwidth;
 
-        int buttonwidth = 140;
+        int buttonwidth = 170;
         int buttonheight = 20;
 
+        int runnerX = left + 20 ;
+        int hunterX = left +215;
+        int spectatorsX = left + 410;
+        int onlineX = left + 605;
 
-        int x = left+40;
+
 
         int runnerstartY = top+82;
         int hunterstartY = top+182;
@@ -116,6 +122,7 @@ int visiblePlayers = 3;
                         }else{
                             selectedrunner = name;
                             selectedhunters.remove(name);
+                            selectedspectators.remove(name);
                         }
                         System.out.println("RUNNER SELECTED: "+selectedrunner);
                          //the screen refreshes so the chekbox updates
@@ -125,10 +132,10 @@ int visiblePlayers = 3;
 
                      }
              ).bounds(
-                     x,
+                     runnerX,
                      playerY,
-                     120,
-                     20
+                     buttonwidth,
+                     buttonheight
              ).build();
              this.addRenderableWidget(runnerButton);
              playerY += 25;
@@ -170,6 +177,7 @@ int visiblePlayers = 3;
 
                                     if(selectedhunters.contains(name)) {
                                         selectedhunters.remove(name);
+                                        selectedspectators.remove(name);
                                     }
                                     else{
                                         selectedhunters.add(name);
@@ -183,15 +191,103 @@ int visiblePlayers = 3;
                                     this.init();
                                 }
                          ).bounds(
-                                x,
+                                hunterX,
                                 hunterY,
-                                120,
-                                20
+                                buttonwidth,
+                                buttonheight
                         ).build();
                 this.addRenderableWidget(hunterButton);
                 hunterY+=25;
 
             }
+        }
+
+
+
+
+        // Spectators selection
+
+        if(this.minecraft.getConnection() != null){
+            int spectatorsY = runnerstartY - scroolOffset;
+
+            for(var playerInfo: this.minecraft.getConnection().getOnlinePlayers()){
+                String name = playerInfo.getProfile().name();
+
+                if(spectatorsY > huntermaxY){
+                    break;
+                }
+
+                if(name.equals(selectedrunner) || selectedhunters.contains(name)){
+                    continue;
+                }
+                if(spectatorsY+buttonheight<scrollTop || spectatorsY>scrollBottom){
+                    spectatorsY += 25;
+                    continue;
+                }
+
+                Button spectatorButton = Button.builder(
+                        Component.literal(
+                                (selectedspectators.contains(name) ? "[✓]":"[ ]")+name
+                        ),
+                        button -> {
+                            errorMessage = "";
+
+                            if(selectedspectators.contains(name)){
+                                selectedspectators.remove(name);
+                            }
+                            else{
+                                selectedspectators.add(name);
+                            }
+                            this.clearWidgets();
+                            this.init();
+                        }
+                ).bounds(
+                        spectatorsX,
+                        spectatorsY,
+                        buttonwidth,
+                        buttonheight
+                ).build();
+                this.addRenderableWidget(spectatorButton);
+                spectatorsY+=25;
+            }
+        }
+
+        //Online players Button
+
+        if(this.minecraft.getConnection()!=null) {
+            int onlineY = runnerstartY - scroolOffset;
+
+            for (var playerInfo : this.minecraft.getConnection().getOnlinePlayers()) {
+                String name = playerInfo.getProfile().name();
+
+                if(onlineY > huntermaxY){
+                    break;
+                }
+
+                if(onlineY + buttonheight < scrollTop || onlineY > scrollBottom){
+                    onlineY+=25;
+                    continue;
+                }
+
+                Button onlineButton = Button.builder(
+                        Component.literal(name),
+                        button -> {
+                            errorMessage = "Select a role using the role columns.";
+
+                        }
+
+                ).bounds(
+                        onlineX,
+                        onlineY,
+                        buttonwidth,
+                        buttonheight
+                ).build();
+
+                this.addRenderableWidget(onlineButton);
+                onlineY+=25;
+
+            }
+
         }
 
         // done button
@@ -255,7 +351,7 @@ int visiblePlayers = 3;
 
                         }
                 ).bounds(
-                        x,
+                        (this.width - buttonwidth)/2,
                       top+panelheight-40,
                         buttonwidth,
                         buttonheight
@@ -392,6 +488,23 @@ public boolean mouseScrolled(
                 0xFFFF5555,
                 true
         );
+
+        graphics.text(
+                this.font,
+                "SPECTATORS",
+                left + 410,
+                top + 60,
+                0xFF55AAFF, true
+        );
+
+        graphics.text(
+                this.font,
+                "ONLINE PLAYERS",
+                left + 605,
+                top + 60,
+                0xFFFFFFFF, true
+        );
+
 
         if (!errorMessage.isEmpty()) {
             graphics.text(
