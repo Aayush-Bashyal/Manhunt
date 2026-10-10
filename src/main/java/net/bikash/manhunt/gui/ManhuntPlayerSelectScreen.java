@@ -2,6 +2,7 @@ package net.bikash.manhunt.gui;
 
 import net.bikash.manhunt.network.ManhuntRoleSelectionPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,7 +26,8 @@ public class ManhuntPlayerSelectScreen extends Screen {
     private String roleMenuPlayer = null;
     private int roleMenuX ;
     private int roleMenuY;
-
+    private int roleMenuWidth = 140;
+    private int roleMenuHeight = 100;
 
     private String errorMessage = "";
 
@@ -397,7 +399,7 @@ int menuWidth = 120;
         int menuY = Math.max(0,Math.min(roleMenuY + 18 , this.height- menuHeight - 5));
 
         this.addRenderableWidget(
-                Button.builder(Component.literal("Runner"), button -> {
+                Button.builder(Component.literal("♟ RUNNER").withStyle(ChatFormatting.GREEN), button -> {
                     assignRole(roleMenuPlayer,"runner");
                 }).bounds(
                         menuX,
@@ -408,7 +410,7 @@ int menuWidth = 120;
         );
 
         this.addRenderableWidget(
-                Button.builder(Component.literal("Hunter"), button -> {
+                Button.builder(Component.literal("⚔ Hunter").withStyle(ChatFormatting.RED), button -> {
                     assignRole(roleMenuPlayer,"hunter");
                 }).bounds(
                         menuX,
@@ -419,7 +421,7 @@ int menuWidth = 120;
         );
 
         this.addRenderableWidget(
-                Button.builder(Component.literal("Spectator"), button -> {
+                Button.builder(Component.literal("◉ Spectator").withStyle(ChatFormatting.BLUE), button -> {
                     assignRole(roleMenuPlayer,"spectator");
                 }).bounds(
                         menuX,
@@ -430,7 +432,7 @@ int menuWidth = 120;
         );
 
         this.addRenderableWidget(
-                Button.builder(Component.literal("Unassigned"), button -> {
+                Button.builder(Component.literal("× Unassigned").withStyle(ChatFormatting.GRAY), button -> {
                     assignRole(roleMenuPlayer,"unassigned");
                 }).bounds(
                         menuX,
@@ -557,7 +559,7 @@ public boolean mouseScrolled(
         graphics.text(
                 this.font,
                 "RUNNER",
-                left + 20,
+                left + 25,
                 top + 60,
                 0xFF55FF55,
                 true
@@ -601,8 +603,46 @@ public boolean mouseScrolled(
             );
         }
 
+if(roleMenuPlayer!=null) {
+    int menuX = Math.max(
+            panelLeft + 5,
+            Math.min(roleMenuX, panelRight - roleMenuWidth - 5)
+    );
+
+    int menuY = Math.max(0, Math.min(roleMenuY + 18,
+            this.height - roleMenuHeight - 5));
+
+//runner bg
+    graphics.fill(
+            menuX,
+            menuY + 22,
+                menuX+roleMenuWidth,menuY + 40,
+            0xFF245C24
+            );
+//hunter
+    graphics.fill(
+            menuX,
+            menuY + 42,
+            menuX+roleMenuWidth,menuY + 60,
+            0xFF702020
+    );
+
+    graphics.fill(
+            menuX,
+            menuY + 62,
+            menuX+roleMenuWidth,menuY + 80,
+            0xFF204A70
+    );
+
+    graphics.fill(
+            menuX,
+            menuY + 82,
+            menuX+roleMenuWidth,menuY + 100,
+            0xFF404040
+    );
 
 
+}
         super.extractRenderState(
                 graphics,
                 mouseX,
