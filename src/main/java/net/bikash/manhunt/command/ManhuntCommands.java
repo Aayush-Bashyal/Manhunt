@@ -60,10 +60,23 @@ public class ManhuntCommands {
 
 
                    game.start();
+                    if(!game.isRunning()){
+                        return 0;
+                    }
                     context.getSource().sendSuccess(
                             () -> Component.literal("Manhunt Started!"),
                             false
                     );
+
+
+                    for (UUID spectatorUUID : game.getSpectators()){
+                        ServerPlayer spectator = context.getSource().getServer().getPlayerList().getPlayer(spectatorUUID);
+
+                        if(spectator != null){
+                            spectator.setGameMode(net.minecraft.world.level.GameType.SPECTATOR);
+                        }
+                    }
+
                     for(UUID hunterUUID: game.getHunters()){
                         ServerPlayer hunter = context.getSource().
                                 getServer().getPlayerList().getPlayer(hunterUUID);

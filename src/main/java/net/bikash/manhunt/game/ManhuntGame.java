@@ -60,6 +60,20 @@ public List<UUID> getHunters(){
         return hunters;
 }
 
+public void addSpectator(UUID spectator){
+        if(!spectators.contains(spectator)){
+            spectators.add(spectator);
+        }
+}
+public List<UUID> getSpectators(){
+        return spectators;
+    }
+
+    public void clearSpectators(){
+        spectators.clear();
+    }
+
+
 public void clearHunters(){
         hunters.clear();
 }
