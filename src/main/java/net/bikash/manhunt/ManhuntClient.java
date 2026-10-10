@@ -2,6 +2,7 @@ package net.bikash.manhunt;
 
 import net.bikash.manhunt.client.ManhuntClientNetwork;
 import net.bikash.manhunt.client.ManhuntCompassRenderer;
+import net.bikash.manhunt.client.ManhuntSpectatorManager;
 import net.bikash.manhunt.gui.ManhuntStartScreen;
 import net.bikash.manhunt.hud.ManhuntHUD;
 import net.bikash.manhunt.network.ManhuntSpectatorTargetsPayload;
@@ -58,6 +59,21 @@ private static boolean opened = false;
                 ManhuntSpectatorTargetsPayload.TYPE,
                 ManhuntSpectatorTargetsPayload.CODEC
         );
+
+        ClientTickEvents.END_CLIENT_TICK.register(client->{
+            if(client.player ==null){
+                return;
+            }
+            while(nextTargetKey.consumeClick()){
+                ManhuntSpectatorManager.nextTarget();
+                ManhuntSpectatorManager.updateCamera();
+            }
+
+            while(previousTargetKey.consumeClick()){
+                ManhuntSpectatorManager.previousTarget();
+                ManhuntSpectatorManager.updateCamera();
+            }
+        });
     }
 
 }
