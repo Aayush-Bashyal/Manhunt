@@ -11,6 +11,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
 
 
     private String selectedrunner = null;
+    private String selectedonlineplayer = null;
     private final java.util.Set<String> selectedhunters =
             new java.util.HashSet<>();
     private final java.util.Set<String> selectedspectators =
@@ -21,6 +22,9 @@ public class ManhuntPlayerSelectScreen extends Screen {
     private int scrollBottom;
     private int panelLeft;
     private int panelRight;
+    private String roleMenuPlayer = null;
+    private int roleMenuX ;
+    private int roleMenuY;
 
 
     private String errorMessage = "";
@@ -39,7 +43,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
     protected void init(){
 
 int panelwidth = 800;
-int panelheight = 300;
+int panelheight = 400;
 
 int left = (this.width - panelwidth)/2;
 int top = (this.height - panelheight)/2;
@@ -47,8 +51,8 @@ int top = (this.height - panelheight)/2;
         panelLeft = left;
         panelRight = left + panelwidth;
 
-        int buttonwidth = 170;
-        int buttonheight = 20;
+        int buttonwidth = 160;
+        int buttonheight = 18;
 
         int runnerX = left + 20 ;
         int hunterX = left +215;
@@ -57,13 +61,13 @@ int top = (this.height - panelheight)/2;
 
 
 
-        int runnerstartY = top+82;
-        int hunterstartY = top+182;
+        int runnerstartY = top+110;
+        int hunterstartY = top+110;
 
         int runnermaxY = top+155;
         int huntermaxY = top+panelheight-65;
 
-        int scrollTop = top+75;
+        int scrollTop = top+110;
         int scrollBottom = top+panelheight-55;
 
         //calculating how far we can scroll
@@ -72,7 +76,7 @@ int top = (this.height - panelheight)/2;
         if(this.minecraft.getConnection()!=null){
             totalPlayers = this.minecraft.getConnection().getOnlinePlayers().size();
         }
-int visiblePlayers = 3;
+int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
 
         maxScrool = Math.max( 0,
                 (totalPlayers-visiblePlayers)*25
@@ -102,12 +106,12 @@ int visiblePlayers = 3;
 
              String name = playerInfo.getProfile().name();
 
-             if(selectedhunters.contains(name)){
+             if(!name.equals(selectedrunner)){
                  continue;
              }
 
              if(playerY + buttonheight < scrollTop || playerY > scrollBottom){
-                 playerY += 25;
+                 playerY += 22;
                  continue;
              }
 
@@ -138,7 +142,7 @@ int visiblePlayers = 3;
                      buttonheight
              ).build();
              this.addRenderableWidget(runnerButton);
-             playerY += 25;
+             playerY += 22;
 
          }
      }
@@ -159,12 +163,12 @@ int visiblePlayers = 3;
                 //not both runner and hunter means a runner cannot be a  hunter
 
 
-                if(name.equals(selectedrunner)){
+                if(!selectedhunters.contains(name)){
                     continue;
                 }
 
                 if(hunterY + buttonheight < scrollTop || hunterY >scrollBottom){
-                    hunterY+=25;
+                    hunterY+=22;
                     continue;
                 }
 
@@ -197,7 +201,7 @@ int visiblePlayers = 3;
                                 buttonheight
                         ).build();
                 this.addRenderableWidget(hunterButton);
-                hunterY+=25;
+                hunterY+=22;
 
             }
         }
@@ -217,11 +221,11 @@ int visiblePlayers = 3;
                     break;
                 }
 
-                if(name.equals(selectedrunner) || selectedhunters.contains(name)){
+                if(!selectedspectators.contains(name)){
                     continue;
                 }
                 if(spectatorsY+buttonheight<scrollTop || spectatorsY>scrollBottom){
-                    spectatorsY += 25;
+                    spectatorsY += 22;
                     continue;
                 }
 
@@ -248,7 +252,7 @@ int visiblePlayers = 3;
                         buttonheight
                 ).build();
                 this.addRenderableWidget(spectatorButton);
-                spectatorsY+=25;
+                spectatorsY+=22;
             }
         }
 
@@ -260,20 +264,26 @@ int visiblePlayers = 3;
             for (var playerInfo : this.minecraft.getConnection().getOnlinePlayers()) {
                 String name = playerInfo.getProfile().name();
 
+                if(name.equals(selectedrunner) || selectedhunters.contains(name)|| selectedspectators.contains(name)){
+                    onlineY+=22;
+                    continue;
+                }
+
                 if(onlineY > huntermaxY){
                     break;
                 }
 
                 if(onlineY + buttonheight < scrollTop || onlineY > scrollBottom){
-                    onlineY+=25;
+                    onlineY+=22;
                     continue;
-                }
+                }int buttonY = onlineY;
 
                 Button onlineButton = Button.builder(
-                        Component.literal(name),
+                        Component.literal(
+                                (name.equals(selectedonlineplayer)?">" : "")+name
+                        ),
                         button -> {
-                            errorMessage = "Select a role using the role columns.";
-
+                           openRoleMenu(name,onlineX,buttonY);
                         }
 
                 ).bounds(
@@ -284,7 +294,7 @@ int visiblePlayers = 3;
                 ).build();
 
                 this.addRenderableWidget(onlineButton);
-                onlineY+=25;
+                onlineY+=22;
 
             }
 
@@ -357,6 +367,80 @@ int visiblePlayers = 3;
                         buttonheight
                 ).build()
         );
+        createRoleMenu();
+    }
+
+    private void openRoleMenu(String name , int x , int y){
+        roleMenuPlayer = name;
+        roleMenuX = x;
+        roleMenuY = y;
+
+        this.clearWidgets();
+        this.init();
+    }
+
+    private void createRoleMenu(){
+        if(roleMenuPlayer == null){
+            return;
+        }
+
+
+int menuWidth = 120;
+        int menuHeight = 64;
+
+
+        int menuX = Math.max(
+                panelLeft + 5,
+                Math.min(roleMenuX,panelRight - menuWidth - 5)
+        );
+
+        int menuY = Math.max(0,Math.min(roleMenuY + 18 , this.height- menuHeight - 5));
+
+        this.addRenderableWidget(
+                Button.builder(Component.literal("Runner"), button -> {
+                    assignRole(roleMenuPlayer,"runner");
+                }).bounds(
+                        menuX,
+                        menuY,
+                        menuWidth,
+                        16
+                ).build()
+        );
+
+        this.addRenderableWidget(
+                Button.builder(Component.literal("Hunter"), button -> {
+                    assignRole(roleMenuPlayer,"hunter");
+                }).bounds(
+                        menuX,
+                        menuY +16,
+                        menuWidth,
+                        16
+                ).build()
+        );
+
+        this.addRenderableWidget(
+                Button.builder(Component.literal("Spectator"), button -> {
+                    assignRole(roleMenuPlayer,"spectator");
+                }).bounds(
+                        menuX,
+                        menuY + 32,
+                        menuWidth,
+                        16
+                ).build()
+        );
+
+        this.addRenderableWidget(
+                Button.builder(Component.literal("Unassigned"), button -> {
+                    assignRole(roleMenuPlayer,"unassigned");
+                }).bounds(
+                        menuX,
+                        menuY +48,
+                        menuWidth,
+                        16
+                ).build()
+        );
+
+
     }
 
     @Override
@@ -396,8 +480,8 @@ public boolean mouseScrolled(
         double scrollY
 ){
 
-        int panelwidth = 400;
-        int panelheight = 300;
+        int panelwidth = 800;
+        int panelheight = 400;
 
         int left = (this.width-panelwidth)/2;
         int top = (this.height - panelheight)/2;
@@ -434,8 +518,8 @@ public boolean mouseScrolled(
         );
 
 //panel
-        int panelwidth = 400;
-        int panelheight = 300;
+        int panelwidth = 800;
+        int panelheight = 400;
 
         int left = (this.width - panelwidth) / 2;
         int top = (this.height - panelheight) / 2;
@@ -473,7 +557,7 @@ public boolean mouseScrolled(
         graphics.text(
                 this.font,
                 "RUNNER",
-                left + 40,
+                left + 20,
                 top + 60,
                 0xFF55FF55,
                 true
@@ -483,8 +567,8 @@ public boolean mouseScrolled(
         graphics.text(
                 this.font,
                 "HUNTERS",
-                left + 40,
-                top + 160,
+                left + 215,
+                top + 60,
                 0xFFFF5555,
                 true
         );
@@ -533,4 +617,55 @@ public boolean mouseScrolled(
     }
 
 
+    private void assignRole(String name, String role){
+        selectedhunters.remove(name);
+        selectedspectators.remove(name);
+
+        if(name.equals(selectedrunner)){
+            selectedrunner = null;
+        }
+
+
+        switch(role) {
+            case "runner" -> selectedrunner = name;
+            case "hunter" -> selectedhunters.add(name);
+            case "spectator" -> selectedspectators.add(name);
+        }
+
+        roleMenuPlayer = null;
+        errorMessage = "";
+
+        this.clearWidgets();
+        this.init();
+    }
+
+    private void assignSelectedPlayer(String role) {
+        if (selectedonlineplayer == null) {
+            errorMessage = "Select a player from ONLINE PLAYERS first!";
+            return;
+        }
+
+        String name = selectedonlineplayer;
+
+        selectedhunters.remove(name);
+        selectedspectators.remove(name);
+
+        if ("runner".equals(role)) {
+            selectedrunner = name;
+        } else if ("hunter".equals(role)) {
+            if (name.equals(selectedrunner)) {
+                selectedrunner = null;
+            }
+            selectedhunters.add(name);
+        } else if ("spectator".equals(role)) {
+            if (name.equals(selectedrunner)) {
+                selectedrunner = null;
+            }
+            selectedspectators.add(name);
+        }
+
+        errorMessage = name + " assigned as " + role;
+        this.clearWidgets();
+        this.init();
+    }
     }
