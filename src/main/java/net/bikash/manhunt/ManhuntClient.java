@@ -4,8 +4,10 @@ import net.bikash.manhunt.client.ManhuntClientNetwork;
 import net.bikash.manhunt.client.ManhuntCompassRenderer;
 import net.bikash.manhunt.gui.ManhuntStartScreen;
 import net.bikash.manhunt.hud.ManhuntHUD;
+import net.bikash.manhunt.network.ManhuntSpectatorTargetsPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
 import org.lwjgl.glfw.GLFW;
@@ -51,6 +53,11 @@ private static boolean opened = false;
                 category
                 )
                 );
+
+        PayloadTypeRegistry.clientboundPlay().register(
+                ManhuntSpectatorTargetsPayload.TYPE,
+                ManhuntSpectatorTargetsPayload.CODEC
+        );
     }
 
 }

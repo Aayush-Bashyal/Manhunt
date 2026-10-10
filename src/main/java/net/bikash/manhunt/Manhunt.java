@@ -12,9 +12,14 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.Identifier;
 
+import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class Manhunt implements ModInitializer {
 
@@ -47,6 +52,11 @@ public class Manhunt implements ModInitializer {
 		PayloadTypeRegistry.clientboundPlay().register(
 				ManhuntAdminNetwork.TYPE,
 				ManhuntAdminNetwork.CODEC
+		);
+
+		PayloadTypeRegistry.clientboundPlay().register(
+				ManhuntSpectatorTargetsPayload.TYPE,
+				ManhuntSpectatorTargetsPayload.CODEC
 		);
 
 
@@ -101,6 +111,20 @@ public class Manhunt implements ModInitializer {
 					System.out.println("RUNNER: " +payload.runner());
 
 					System.out.println("HUNTERS: "+payload.hunters());
+
+					List<UUID> targets = new ArrayList<>();
+					targets.add(payload.runner());
+					targets.addAll(payload.hunters());
+
+					ManhuntSpectatorTargetsPayload targetsPayload = new ManhuntSpectatorTargetsPayload(targets);
+
+					for(UUID spectatorUUID : game.getSpectators()){
+						ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorUUID);
+
+						if(spectator != null){
+							ServerPlayNetworking.send(spectator,targetsPayload);
+						}
+					}
 				}
 		);
 	}

@@ -1,7 +1,9 @@
 package net.bikash.manhunt.client;
+import net.bikash.manhunt.Manhunt;
 import net.bikash.manhunt.hud.ManhuntHUD;
 import net.bikash.manhunt.network.ManhuntAdminNetwork;
 import net.bikash.manhunt.network.ManhuntHUDNetwork;
+import net.bikash.manhunt.network.ManhuntSpectatorTargetsPayload;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -45,6 +47,15 @@ public class ManhuntClientNetwork {
 
                 ManhuntAdminNetwork.isAdmin = payload.admin();
             }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                ManhuntSpectatorTargetsPayload.TYPE,((payload, context) -> {
+                    context.client().execute(()->{
+                        ManhuntSpectatorManager.setTargets(payload.targets());
+                        ManhuntSpectatorManager.updateCamera();
+                    });
+                })
         );
 
     }
