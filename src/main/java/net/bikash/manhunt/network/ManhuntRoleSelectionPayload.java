@@ -13,7 +13,8 @@ import java.util.UUID;
 
 public record ManhuntRoleSelectionPayload (
     UUID runner,
-    List<UUID> hunters
+    List<UUID> hunters,
+    List<UUID> spectators
 ) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<ManhuntRoleSelectionPayload> TYPE =
             new CustomPacketPayload.Type<>(
@@ -40,8 +41,16 @@ public record ManhuntRoleSelectionPayload (
                         )
                 );
             }
+
+            int spectatorsCount = buf.readVarInt();
+            List<UUID> spectators = new ArrayList<>();
+
+            for(int i=0;i<spectatorsCount;i++){
+                spectators.add(UUID.fromString(buf.readUtf()));
+            }
+
             return new ManhuntRoleSelectionPayload(
-                    runner,hunters
+                    runner,hunters,spectators
             );
         }
         @Override
@@ -56,6 +65,11 @@ public record ManhuntRoleSelectionPayload (
                 buf.writeUtf(
                         hunter.toString()
                 );
+            }
+
+            buf.writeVarInt(payload.spectators().size());
+            for(UUID spectators : payload.spectators()){
+                buf.writeUtf(spectators.toString());
             }
         }
     };

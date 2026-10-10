@@ -83,6 +83,8 @@ public class Manhunt implements ModInitializer {
 						return;
 					}
 
+
+
 					game.setRunner(payload.runner());
 					game.clearHunters();
 

@@ -1,6 +1,6 @@
 package net.bikash.manhunt.gui;
 
-import com.llamalad7.mixinextras.sugar.Share;
+
 import net.bikash.manhunt.network.ManhuntAdminNetwork;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;

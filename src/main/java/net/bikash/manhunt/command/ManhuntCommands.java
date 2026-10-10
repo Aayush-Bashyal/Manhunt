@@ -51,6 +51,14 @@ public class ManhuntCommands {
                         );
                         return 0;
                     }
+
+                    if(game.getRunner() == null || game.getHunters().isEmpty()){
+                        context.getSource().sendFailure(
+                                Component.literal("Please select a Runner and at least one Hunter to start the Manhunt ! ")
+                        );
+                    }
+
+
                    game.start();
                     context.getSource().sendSuccess(
                             () -> Component.literal("Manhunt Started!"),

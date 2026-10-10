@@ -8,6 +8,7 @@ public class ManhuntGame {
     private boolean running = false;
     private UUID runner;
     private final List<UUID> hunters = new ArrayList<>();
+    private final List<UUID> spectators = new ArrayList<>();
     private final List<UUID> admins = new ArrayList<>();
     private long startTime;
     private long finalTime;
@@ -15,6 +16,7 @@ public class ManhuntGame {
     private int spawnChunkX;
     private int spawnChunkZ;
     private boolean spawnChunkSet = false;
+
 
     public boolean isRunning(){
         return running;

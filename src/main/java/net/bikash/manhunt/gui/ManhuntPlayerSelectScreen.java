@@ -1,5 +1,6 @@
 package net.bikash.manhunt.gui;
 
+import net.bikash.manhunt.network.ManhuntAdminNetwork;
 import net.bikash.manhunt.network.ManhuntRoleSelectionPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
@@ -20,14 +21,13 @@ public class ManhuntPlayerSelectScreen extends Screen {
     private int refreshtimer = 0;
     private int scroolOffset = 0;
     private int maxScrool = 0;
-    private int scrollBottom;
+
     private int panelLeft;
     private int panelRight;
     private String roleMenuPlayer = null;
     private int roleMenuX ;
     private int roleMenuY;
-    private int roleMenuWidth = 140;
-    private int roleMenuHeight = 100;
+
 
     private String errorMessage = "";
 
@@ -43,6 +43,11 @@ public class ManhuntPlayerSelectScreen extends Screen {
 
     @Override
     protected void init(){
+
+        if(!ManhuntAdminNetwork.isAdmin){
+            this.minecraft.setScreen(new ManhuntStartScreen());
+            return;
+        }
 
 int panelwidth = 800;
 int panelheight = 400;
@@ -66,8 +71,8 @@ int top = (this.height - panelheight)/2;
         int runnerstartY = top+110;
         int hunterstartY = top+110;
 
-        int runnermaxY = top+155;
-        int huntermaxY = top+panelheight-65;
+        int runnermaxY = top + panelheight - 55;
+        int huntermaxY = top + panelheight - 55;
 
         int scrollTop = top+110;
         int scrollBottom = top+panelheight-55;
@@ -81,7 +86,7 @@ int top = (this.height - panelheight)/2;
 int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
 
         maxScrool = Math.max( 0,
-                (totalPlayers-visiblePlayers)*25
+                (totalPlayers-visiblePlayers)*22
         );
 
         if(scroolOffset > maxScrool){
@@ -92,7 +97,7 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
      if(this.minecraft.getConnection()!=null){
 
          int playerY = runnerstartY-scroolOffset;
-         int hunterY = hunterstartY - scroolOffset;
+
 
          for(var playerInfo : this.minecraft.getConnection().getOnlinePlayers()) {
 
@@ -100,9 +105,6 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                  break;
              }
 
-             if(hunterY > huntermaxY){
-                 break;
-             }
 
 
 
@@ -308,17 +310,7 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                 Button.builder(
                         Component.literal("DONE"),
                         button -> {
-                            if(selectedrunner==null){
-                                errorMessage = "Please select a Runner!";
-                                return;
-                            }
 
-
-
-                            if(selectedhunters.isEmpty()){
-                                errorMessage = "Please select at least one Hunter!";
-                                return;
-                            }
 
 
                             if(this.minecraft.getConnection()==null){
@@ -352,10 +344,24 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                                 System.out.println("RUNNER UUID: "+runnerUUID);
                             System.out.print("HUNTER UUIDS: "+hunterUUIDs);
 
+                            java.util.List<java.util.UUID> spectatorsUUIDs = new java.util.ArrayList<>();
+
+                            for(String name : selectedspectators){
+                                var player = this.minecraft.player.connection.getOnlinePlayers().stream()
+                                        .filter(p -> p.getProfile().name().equals(name))
+                                        .findFirst()
+                                        .orElse(null);
+
+                                if(player!=null){
+                                    spectatorsUUIDs.add(player.getProfile().id());
+                                }
+                            }
+
                             ClientPlayNetworking.send(
                                     new ManhuntRoleSelectionPayload(
                                             runnerUUID,
-                                            hunterUUIDs
+                                            hunterUUIDs,
+                                            spectatorsUUIDs
                                     )
                             );
 
@@ -364,7 +370,7 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                         }
                 ).bounds(
                         (this.width - buttonwidth)/2,
-                      top+panelheight-40,
+                      top+panelheight-35,
                         buttonwidth,
                         buttonheight
                 ).build()
@@ -496,7 +502,7 @@ public boolean mouseScrolled(
             return false;
         }
 
-        scroolOffset -= (int) (scrollY *15);
+        scroolOffset -= (int) (scrollY *22);
 
     scroolOffset = Math.max(0, scroolOffset);
     scroolOffset = Math.min(maxScrool, scroolOffset);
@@ -544,6 +550,36 @@ public boolean mouseScrolled(
                 top + 2,
                 0xFF55FF55
         );
+
+        int lineTop = top +50;
+        int lineBottom = top + panelheight - 50;
+
+        graphics.fill(
+                left+195,
+                lineTop,
+                left+196,
+                lineBottom,
+                0xFF55FF55
+
+        );
+
+        graphics.fill(
+                left+390,
+                lineTop,
+                left+391,
+                lineBottom,
+                0xFF55FF55
+        );
+
+        graphics.fill(
+                left+585,
+                lineTop,
+                left+586,
+                lineBottom,
+                0xFF55FF55
+        );
+
+
         String title = "SELECT PLAYERS";
 
         graphics.text(
@@ -559,7 +595,7 @@ public boolean mouseScrolled(
         graphics.text(
                 this.font,
                 "RUNNER",
-                left + 50,
+                left + 70,
                 top + 60,
                 0xFF55FF55,
                 true
@@ -640,33 +676,5 @@ public boolean mouseScrolled(
         this.init();
     }
 
-    private void assignSelectedPlayer(String role) {
-        if (selectedonlineplayer == null) {
-            errorMessage = "Select a player from ONLINE PLAYERS first!";
-            return;
-        }
-
-        String name = selectedonlineplayer;
-
-        selectedhunters.remove(name);
-        selectedspectators.remove(name);
-
-        if ("runner".equals(role)) {
-            selectedrunner = name;
-        } else if ("hunter".equals(role)) {
-            if (name.equals(selectedrunner)) {
-                selectedrunner = null;
-            }
-            selectedhunters.add(name);
-        } else if ("spectator".equals(role)) {
-            if (name.equals(selectedrunner)) {
-                selectedrunner = null;
-            }
-            selectedspectators.add(name);
-        }
-
-        errorMessage = name + " assigned as " + role;
-        this.clearWidgets();
-        this.init();
-    }
+   
     }
