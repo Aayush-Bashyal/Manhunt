@@ -113,7 +113,11 @@ public class Manhunt implements ModInitializer {
 					System.out.println("HUNTERS: "+payload.hunters());
 
 					List<UUID> targets = new ArrayList<>();
-					targets.add(payload.runner());
+
+					if (payload.runner() != null) {
+						targets.add(payload.runner());
+					}
+
 					targets.addAll(payload.hunters());
 
 					ManhuntSpectatorTargetsPayload targetsPayload = new ManhuntSpectatorTargetsPayload(targets);

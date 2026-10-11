@@ -39,6 +39,12 @@ public class ManhuntPlayerSelectScreen extends Screen {
         super(Component.literal("Select Players"));
     }
 
+    public int getPanelWidth(){
+        return Math.min(800,Math.max(1,this.width-20));
+    }
+    private int getPanelHeight(){
+        return Math.min(400,Math.max(1,this.height-20));
+    }
 
 
     @Override
@@ -49,8 +55,8 @@ public class ManhuntPlayerSelectScreen extends Screen {
             return;
         }
 
-int panelwidth = 800;
-int panelheight = 400;
+int panelwidth = getPanelWidth();
+int panelheight = getPanelHeight();
 
 int left = (this.width - panelwidth)/2;
 int top = (this.height - panelheight)/2;
@@ -58,24 +64,30 @@ int top = (this.height - panelheight)/2;
         panelLeft = left;
         panelRight = left + panelwidth;
 
-        int buttonwidth = 160;
+        int padding = 16;
+        int gap = 12;
+
+        int availableWidth = panelwidth - padding * 2 - gap * 3;
+        int columnWidth = availableWidth / 4;
+
+        int buttonwidth = columnWidth + 16;
         int buttonheight = 18;
 
-        int runnerX = left + 20 ;
-        int hunterX = left +215;
-        int spectatorsX = left + 410;
-        int onlineX = left + 605;
+        int runnerX = left + padding+8;
+        int hunterX = runnerX + columnWidth + gap;
+        int spectatorsX = hunterX + columnWidth + gap;
+        int onlineX = spectatorsX + columnWidth + gap;
+
+        int scrollTop = top+90;
+        int scrollBottom = top+panelheight-45;
+
+        int runnerstartY = scrollTop;
+        int hunterstartY = scrollTop;
+
+        int runnermaxY = scrollBottom;
+        int huntermaxY = scrollBottom;
 
 
-
-        int runnerstartY = top+110;
-        int hunterstartY = top+110;
-
-        int runnermaxY = top + panelheight - 55;
-        int huntermaxY = top + panelheight - 55;
-
-        int scrollTop = top+110;
-        int scrollBottom = top+panelheight-55;
 
         //calculating how far we can scroll
 
@@ -306,6 +318,12 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
 
         // done button
 
+        int doneWidth = 100;
+        int doneHeight = 20;
+
+        int doneX = left + (panelwidth - doneWidth) / 2;
+        int doneY = top + panelheight - doneHeight - 10;
+
         this.addRenderableWidget(
                 Button.builder(
                         Component.literal("DONE"),
@@ -337,12 +355,9 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                                     hunterUUIDs.add(uuid);
                                 }
                             }
-                                if(runnerUUID==null){
-                                    System.out.println("RUNNER UUID NOT FOUND");
-                                    return;
-                                }
-                                System.out.println("RUNNER UUID: "+runnerUUID);
-                            System.out.print("HUNTER UUIDS: "+hunterUUIDs);
+
+                            System.out.println("RUNNER UUID: " + runnerUUID);
+                            System.out.println("HUNTER UUIDS: " + hunterUUIDs);
 
                             java.util.List<java.util.UUID> spectatorsUUIDs = new java.util.ArrayList<>();
 
@@ -357,6 +372,11 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                                 }
                             }
 
+                            if (selectedrunner == null && selectedhunters.isEmpty() && selectedspectators.isEmpty()) {
+                                this.onClose();
+                                return;
+                            }
+
                             ClientPlayNetworking.send(
                                     new ManhuntRoleSelectionPayload(
                                             runnerUUID,
@@ -369,14 +389,16 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
 
                         }
                 ).bounds(
-                        (this.width - buttonwidth)/2,
-                      top+panelheight-35,
+                        doneX,
+                      doneY,
                         buttonwidth,
                         buttonheight
                 ).build()
         );
         createRoleMenu();
     }
+
+
 
     private void openRoleMenu(String name , int x , int y){
         roleMenuPlayer = name;
@@ -488,14 +510,14 @@ public boolean mouseScrolled(
         double scrollY
 ){
 
-        int panelwidth = 800;
-        int panelheight = 400;
+        int panelwidth = getPanelWidth();
+        int panelheight = getPanelHeight();
 
         int left = (this.width-panelwidth)/2;
         int top = (this.height - panelheight)/2;
 
-        int scrollTop = top +75;
-        int scrollBotoom = top + panelheight-55;
+        int scrollTop = (this.height-getPanelHeight())/2+90;
+        int scrollBotoom = (this.height+getPanelHeight())/2-45;
 
         if(mouseX<left|| mouseX>left+panelwidth || mouseY < scrollTop || mouseY > scrollBotoom){
 
@@ -526,8 +548,8 @@ public boolean mouseScrolled(
         );
 
 //panel
-        int panelwidth = 800;
-        int panelheight = 400;
+        int panelwidth = getPanelWidth();
+        int panelheight = getPanelHeight();
 
         int left = (this.width - panelwidth) / 2;
         int top = (this.height - panelheight) / 2;
@@ -579,6 +601,15 @@ public boolean mouseScrolled(
                 0xFF55FF55
         );
 
+        int padding = 16;
+        int gap = 12;
+        int columnWidth = (panelwidth - padding * 2 - gap * 3) / 4;
+
+        int runnerCenter = left + padding + columnWidth / 2;
+        int hunterCenter = runnerCenter + columnWidth + gap;
+        int spectatorsCenter = hunterCenter + columnWidth + gap;
+        int onlineCenter = spectatorsCenter + columnWidth + gap;
+
 
         String title = "SELECT PLAYERS";
 
@@ -595,7 +626,7 @@ public boolean mouseScrolled(
         graphics.text(
                 this.font,
                 "RUNNER",
-                left + 70,
+                runnerCenter - font.width("RUNNER")/2,
                 top + 60,
                 0xFF55FF55,
                 true
@@ -605,7 +636,7 @@ public boolean mouseScrolled(
         graphics.text(
                 this.font,
                 "HUNTERS",
-                left + 215,
+                hunterCenter - font.width("HUNTERS") / 2,
                 top + 60,
                 0xFFFF5555,
                 true
@@ -614,7 +645,7 @@ public boolean mouseScrolled(
         graphics.text(
                 this.font,
                 "SPECTATORS",
-                left + 410,
+                spectatorsCenter - font.width("SPECTATORS") / 2,
                 top + 60,
                 0xFF55AAFF, true
         );
@@ -622,7 +653,7 @@ public boolean mouseScrolled(
         graphics.text(
                 this.font,
                 "ONLINE PLAYERS",
-                left + 605,
+                onlineCenter - font.width("ONLINE PLAYERS") / 2,
                 top + 60,
                 0xFFFFFFFF, true
         );

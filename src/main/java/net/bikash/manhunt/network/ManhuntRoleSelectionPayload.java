@@ -29,13 +29,17 @@ public record ManhuntRoleSelectionPayload (
         public ManhuntRoleSelectionPayload decode(
                 RegistryFriendlyByteBuf buf
         ){
-            UUID runner = UUID.fromString(
-                    buf.readUtf()
-            );
+            UUID runner = null;
+
+            if (buf.readBoolean()) {
+                runner = UUID.fromString(buf.readUtf());
+            }
+
             int hunterCount = buf.readVarInt();
             List<UUID> hunters = new ArrayList<>();
             for (int i =0;i<hunterCount;i++){
                 hunters.add(
+
                         UUID.fromString(
                                 buf.readUtf()
                         )
@@ -58,7 +62,12 @@ public record ManhuntRoleSelectionPayload (
                 RegistryFriendlyByteBuf buf,
                 ManhuntRoleSelectionPayload payload
         ){
-            buf.writeUtf( payload.runner().toString());
+            buf.writeBoolean(payload.runner() != null);
+
+            if (payload.runner() != null) {
+                buf.writeUtf(payload.runner().toString());
+            }
+
             buf.writeVarInt(payload.hunters().size());
 
             for(UUID hunter : payload.hunters()){
