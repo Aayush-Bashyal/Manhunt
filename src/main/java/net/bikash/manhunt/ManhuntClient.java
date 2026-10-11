@@ -55,10 +55,7 @@ private static boolean opened = false;
                 )
                 );
 
-        PayloadTypeRegistry.clientboundPlay().register(
-                ManhuntSpectatorTargetsPayload.TYPE,
-                ManhuntSpectatorTargetsPayload.CODEC
-        );
+
 
         ClientTickEvents.END_CLIENT_TICK.register(client->{
             if(client.player ==null){
