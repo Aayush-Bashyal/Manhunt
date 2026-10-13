@@ -1,14 +1,12 @@
 package net.bikash.manhunt.client;
 import net.bikash.manhunt.Manhunt;
+import net.bikash.manhunt.gui.ManhuntPlayerSelectScreen;
 import net.bikash.manhunt.hud.ManhuntHUD;
-import net.bikash.manhunt.network.ManhuntAdminNetwork;
-import net.bikash.manhunt.network.ManhuntHUDNetwork;
-import net.bikash.manhunt.network.ManhuntSpectatorTargetsPayload;
+import net.bikash.manhunt.network.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
-import net.bikash.manhunt.network.ManhuntNetwork;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import java.util.List;
 public class ManhuntClientNetwork {
@@ -56,6 +54,19 @@ public class ManhuntClientNetwork {
                         ManhuntSpectatorManager.updateCamera();
                     });
                 })
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                ManhuntCurrentRolesPayload.TYPE,
+                (payload,context)-> {
+                    context.client().execute(()->{
+                        ManhuntPlayerSelectScreen.updateSavedRoles(
+                                payload.runner(),
+                                payload.hunters(),
+                                payload.spectators()
+                        );
+                    });
+                }
         );
 
     }

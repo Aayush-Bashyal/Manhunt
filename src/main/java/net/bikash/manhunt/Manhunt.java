@@ -49,6 +49,14 @@ public class Manhunt implements ModInitializer {
 				ManhuntRoleSelectionPayload.TYPE,
 				ManhuntRoleSelectionPayload.CODEC
 		);
+		PayloadTypeRegistry.serverboundPlay().register(
+				ManhuntRequestRolesPayload.TYPE,
+				ManhuntRequestRolesPayload.CODEC
+		);
+		PayloadTypeRegistry.clientboundPlay().register(
+				ManhuntCurrentRolesPayload.TYPE,
+				ManhuntCurrentRolesPayload.CODEC
+		);
 		PayloadTypeRegistry.clientboundPlay().register(
 				ManhuntAdminNetwork.TYPE,
 				ManhuntAdminNetwork.CODEC
@@ -115,7 +123,7 @@ public class Manhunt implements ModInitializer {
 					List<UUID> targets = new ArrayList<>();
 
 					if (payload.runner() != null) {
-						targets.add(payload.runner()); 
+						targets.add(payload.runner());
 					}
 
 					targets.addAll(payload.hunters());
@@ -131,6 +139,32 @@ public class Manhunt implements ModInitializer {
 					}
 				}
 		);
+
+
+		ServerPlayNetworking.registerGlobalReceiver(
+				ManhuntRequestRolesPayload.TYPE,
+				(payload, context) -> {
+					var server = context.server();
+					var player = context.player();
+					var game = Manhunt.getGame(server);
+
+					// onlyyy the admin can requet saved roless
+					if (!game.isAdmin(player.getUUID())) {
+						return;
+					}
+
+					ManhuntCurrentRolesPayload savedRoles =
+							new ManhuntCurrentRolesPayload(
+									game.getRunner(),
+									new ArrayList<>(game.getHunters()),
+									new ArrayList<>(game.getSpectators())
+							);
+
+					ServerPlayNetworking.send(player, savedRoles);
+				}
+		);
+
+
 	}
 
 }

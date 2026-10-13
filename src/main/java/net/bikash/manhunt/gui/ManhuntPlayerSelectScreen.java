@@ -1,6 +1,7 @@
 package net.bikash.manhunt.gui;
 
 import net.bikash.manhunt.network.ManhuntAdminNetwork;
+import net.bikash.manhunt.network.ManhuntRequestRolesPayload;
 import net.bikash.manhunt.network.ManhuntRoleSelectionPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
@@ -8,6 +9,8 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+
+import java.lang.foreign.PaddingLayout;
 
 public class ManhuntPlayerSelectScreen extends Screen {
 
@@ -27,7 +30,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
     private String roleMenuPlayer = null;
     private int roleMenuX ;
     private int roleMenuY;
-
+    private boolean rolesRequested = false;
 
     private String errorMessage = "";
 
@@ -53,6 +56,13 @@ public class ManhuntPlayerSelectScreen extends Screen {
         if(!ManhuntAdminNetwork.isAdmin){
             this.minecraft.setScreen(new ManhuntStartScreen());
             return;
+        }
+        if(!rolesRequested && this.minecraft.getConnection() != null){
+            rolesRequested = true;
+
+            ClientPlayNetworking.send(
+                    new ManhuntRequestRolesPayload()
+            );
         }
 
 int panelwidth = getPanelWidth();
@@ -716,6 +726,46 @@ public boolean mouseScrolled(
         this.clearWidgets();
         this.init();
     }
+    public static void updateSavedRoles(
+            java.util.UUID runner,
+            java.util.List<java.util.UUID> hunters,
+            java.util.List<java.util.UUID> spectators
+    ) {
+           net.minecraft.client.Minecraft client = net.minecraft.client.Minecraft.getInstance();
 
+           client.execute(()-> {
+               if(client.getConnection() == null){
+                   return;
+               }
+               if(!(client.screen instanceof  ManhuntPlayerSelectScreen screen)){
+                   return;
+               }
+
+               screen.selectedrunner = null;
+               screen.selectedhunters.clear();
+               screen.selectedspectators.clear();
+
+               for(var playerInfo : client.getConnection().getOnlinePlayers()){
+                   java.util.UUID id = playerInfo.getProfile().id();
+                   String name = playerInfo.getProfile().name();
+
+                   if(id.equals(runner)){
+                       screen.selectedrunner=name;
+                   }
+
+                   if (hunters.contains(id)) {
+
+                       screen.selectedhunters.add(name);
+                   }
+                   if(spectators.contains(id)){
+                       screen.selectedspectators.add(name);
+                   }
+               }
+               screen.clearWidgets();
+               screen.init();
+           });
+
+
+    }
    
     }
