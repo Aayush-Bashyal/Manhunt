@@ -115,7 +115,7 @@ public class Manhunt implements ModInitializer {
 					List<UUID> targets = new ArrayList<>();
 
 					if (payload.runner() != null) {
-						targets.add(payload.runner());
+						targets.add(payload.runner()); 
 					}
 
 					targets.addAll(payload.hunters());

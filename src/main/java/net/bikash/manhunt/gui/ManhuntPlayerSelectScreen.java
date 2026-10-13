@@ -70,16 +70,22 @@ int top = (this.height - panelheight)/2;
         int availableWidth = panelwidth - padding * 2 - gap * 3;
         int columnWidth = availableWidth / 4;
 
-        int buttonwidth = columnWidth + 16;
+        int buttonwidth = Math.max(1,columnWidth - 12);
         int buttonheight = 18;
 
-        int runnerX = left + padding+8;
-        int hunterX = runnerX + columnWidth + gap;
-        int spectatorsX = hunterX + columnWidth + gap;
-        int onlineX = spectatorsX + columnWidth + gap;
 
-        int scrollTop = top+90;
-        int scrollBottom = top+panelheight-45;
+        int runnerColumnX = left + padding;
+        int hunterColumnX = runnerColumnX + columnWidth + gap;
+        int spectatorsColumnX = hunterColumnX + columnWidth + gap;
+        int onlineColumnX = spectatorsColumnX + columnWidth + gap;
+
+        int runnerX = runnerColumnX + (columnWidth - buttonwidth)/2;
+        int hunterX = hunterColumnX + (columnWidth - buttonwidth)/2;
+        int spectatorsX = spectatorsColumnX + (columnWidth-buttonwidth)/2;
+        int onlineX = onlineColumnX + (columnWidth-buttonwidth)/2;
+
+        int scrollTop = top+85;
+        int scrollBottom =Math.max(scrollTop,top+panelheight-45);
 
         int runnerstartY = scrollTop;
         int hunterstartY = scrollTop;
@@ -391,8 +397,8 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                 ).bounds(
                         doneX,
                       doneY,
-                        buttonwidth,
-                        buttonheight
+                        doneWidth,
+                        doneHeight
                 ).build()
         );
         createRoleMenu();
@@ -576,34 +582,38 @@ public boolean mouseScrolled(
         int lineTop = top +50;
         int lineBottom = top + panelheight - 50;
 
-        graphics.fill(
-                left+195,
-                lineTop,
-                left+196,
-                lineBottom,
-                0xFF55FF55
-
-        );
-
-        graphics.fill(
-                left+390,
-                lineTop,
-                left+391,
-                lineBottom,
-                0xFF55FF55
-        );
-
-        graphics.fill(
-                left+585,
-                lineTop,
-                left+586,
-                lineBottom,
-                0xFF55FF55
-        );
-
         int padding = 16;
         int gap = 12;
-        int columnWidth = (panelwidth - padding * 2 - gap * 3) / 4;
+        int columnWidth = Math.max(1,(panelwidth - padding * 2 - gap * 3) / 4);
+        int separator1 = left + padding + columnWidth + gap / 2;
+        int separator2 = separator1 + columnWidth + gap;
+        int separator3 = separator2 + columnWidth + gap;
+
+        graphics.fill(
+                separator1,
+                lineTop,
+                separator1+1,
+                lineBottom,
+                0xFF55FF55
+
+        );
+
+        graphics.fill(
+                separator2,
+                lineTop,
+                separator2+1,
+                lineBottom,
+                0xFF55FF55
+        );
+
+        graphics.fill(
+                separator3,
+                lineTop,
+                separator3+1,
+                lineBottom,
+                0xFF55FF55
+        );
+
 
         int runnerCenter = left + padding + columnWidth / 2;
         int hunterCenter = runnerCenter + columnWidth + gap;
