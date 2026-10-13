@@ -7,6 +7,8 @@ import net.bikash.manhunt.item.ModItems;
 import net.bikash.manhunt.network.*;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.message.v1.ServerMessageDecoratorEvent;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -240,7 +242,13 @@ public class Manhunt implements ModInitializer {
 					ServerPlayNetworking.send(player, savedRoles);
 				}
 		);
+		ServerMessageEvents.ALLOW_CHAT_MESSAGE.register(
+				(message , player, params)->{
+					ManhuntGame game = Manhunt.getGame(player.level().getServer());
 
+					return !game.getSpectators().contains(player.getUUID());
+				}
+		);
 
 	}
 
