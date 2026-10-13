@@ -126,7 +126,31 @@ public class Manhunt implements ModInitializer {
 								game.addSpectator(spectatorsID);
 							}
 						}
-						return;
+						List<UUID> targets = new ArrayList<>();
+
+								if (game.getRunner()!=null){
+							targets.add(game.getRunner());
+						}
+
+								targets.addAll(game.getHunters());
+
+								ManhuntSpectatorTargetsPayload targetsPayload = new ManhuntSpectatorTargetsPayload(targets);
+
+								for(UUID spectatorsUUID : game.getSpectators()){
+									ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorsUUID);
+
+									if(spectator != null){
+										spectator.setGameMode(
+												net.minecraft.world.level.GameType.SPECTATOR
+										);
+										ServerPlayNetworking.send(spectator,targetsPayload)
+										;
+									}
+								}
+								return;
+
+
+
 					}
 
 

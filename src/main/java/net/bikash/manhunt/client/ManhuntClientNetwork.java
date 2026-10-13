@@ -38,6 +38,7 @@ public class ManhuntClientNetwork {
 
 
                     );
+                    ManhuntPlayerSelectScreen.setManhuntRunning(payload.running());
                 }
         );
 

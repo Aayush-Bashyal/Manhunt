@@ -31,7 +31,7 @@ public class ManhuntPlayerSelectScreen extends Screen {
     private int roleMenuX ;
     private int roleMenuY;
     private boolean rolesRequested = false;
-
+    private static boolean manhuntRunning = false;
     private String errorMessage = "";
 
 
@@ -152,6 +152,10 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                              (name.equals(selectedrunner)?"[✓]" : "[ ]")+name),
 
                      button -> {
+                         if(manhuntRunning){
+                             errorMessage = "Roles are locked while Manhunt is running!";
+                         }
+
                          errorMessage = "";
                         if(name.equals(selectedrunner)){
                             selectedrunner=null;
@@ -208,6 +212,11 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                         Component.literal(
                                 (selectedhunters.contains(name)? "[✓]":"[ ]")+ name ),
                                 button -> {
+
+                                    if(manhuntRunning){
+                                        errorMessage = "Roles are locked while Manhunt is running!";
+                                    }
+
 
                                     errorMessage = "";
 
@@ -266,6 +275,11 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                                 (selectedspectators.contains(name) ? "[✓]":"[ ]")+name
                         ),
                         button -> {
+
+                            if(manhuntRunning){
+                                errorMessage = "Roles are locked while Manhunt is running!";
+                            }
+
                             errorMessage = "";
 
                             if(selectedspectators.contains(name)){
@@ -444,6 +458,11 @@ int menuWidth = 120;
 
         this.addRenderableWidget(
                 Button.builder(Component.literal("♟ RUNNER").withStyle(ChatFormatting.GREEN), button -> {
+                    if(manhuntRunning){
+                        errorMessage = "Roles are locked while Manhunt is running!";
+                    }
+
+
                     assignRole(roleMenuPlayer,"runner");
                 }).bounds(
                         menuX,
@@ -455,6 +474,11 @@ int menuWidth = 120;
 
         this.addRenderableWidget(
                 Button.builder(Component.literal("⚔ Hunter").withStyle(ChatFormatting.RED), button -> {
+
+                    if(manhuntRunning){
+                        errorMessage = "Roles are locked while Manhunt is running!";
+                    }
+
                     assignRole(roleMenuPlayer,"hunter");
                 }).bounds(
                         menuX,
@@ -466,6 +490,11 @@ int menuWidth = 120;
 
         this.addRenderableWidget(
                 Button.builder(Component.literal("◉ Spectator").withStyle(ChatFormatting.BLUE), button -> {
+
+                    if(manhuntRunning){
+                        errorMessage = "Roles are locked while Manhunt is running!";
+                    }
+
                     assignRole(roleMenuPlayer,"spectator");
                 }).bounds(
                         menuX,
@@ -477,6 +506,11 @@ int menuWidth = 120;
 
         this.addRenderableWidget(
                 Button.builder(Component.literal("× Unassigned").withStyle(ChatFormatting.GRAY), button -> {
+
+                    if(manhuntRunning){
+                        errorMessage = "Roles are locked while Manhunt is running!";
+                    }
+
                     assignRole(roleMenuPlayer,"unassigned");
                 }).bounds(
                         menuX,
@@ -704,6 +738,9 @@ public boolean mouseScrolled(
 
     }
 
+    public static void setManhuntRunning(boolean running){
+        manhuntRunning = running;
+    }
 
     private void assignRole(String name, String role){
         selectedhunters.remove(name);
