@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.Identifier;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameType;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,8 @@ public class Manhunt implements ModInitializer {
 				ManhuntHUDNetwork.CODEC
 		);
 		PayloadTypeRegistry.serverboundPlay().register(
+
+
 				ManhuntRoleSelectionPayload.TYPE,
 				ManhuntRoleSelectionPayload.CODEC
 		);
@@ -139,10 +142,17 @@ public class Manhunt implements ModInitializer {
 								for(UUID spectatorsUUID : game.getSpectators()){
 									ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorsUUID);
 
+									System.out.println("DEBUG: Checking spectator: " + spectatorsUUID);
+
+									System.out.println("DEBUG: Player found: " + (spectator != null));
+
 									if(spectator != null){
 										spectator.setGameMode(
 												net.minecraft.world.level.GameType.SPECTATOR
 										);
+
+										System.out.println("DEBUG: Switched " + spectator.getName().getString() + " to Spectator Mode");
+
 										ServerPlayNetworking.send(spectator,targetsPayload)
 										;
 									}
@@ -165,9 +175,24 @@ public class Manhunt implements ModInitializer {
 					}
 
 					game.clearSpectators();
-					for (var spectator: payload.spectators()){
-						game.addSpectator(spectator);
+					for(UUID spectatorID : new java.util.LinkedHashSet<>(payload.spectators())){
+						game.addSpectator(spectatorID);
+
+						ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorID);
+
+						if(spectator!= null){
+							spectator.setGameMode(   net.minecraft.world.level.GameType.SPECTATOR);
+
+							System.out.println("SPETATOR MODE SET: " + spectator.getName().getString());
+						}else{
+							System.out.println("SPECTATORS NOT ONLINE: "+ spectatorID);
+						}
+
 					}
+
+					System.out.println("DEBUG: Received spectators: "
+							+ payload.spectators());
+
 					System.out.println("RUNNER: " +payload.runner());
 
 					System.out.println("HUNTERS: "+payload.hunters());

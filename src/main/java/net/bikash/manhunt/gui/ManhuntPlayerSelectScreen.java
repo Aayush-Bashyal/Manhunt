@@ -385,11 +385,12 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                                     hunterUUIDs.add(uuid);
                                 }
                             }
+                            java.util.List<java.util.UUID> spectatorsUUIDs = new java.util.ArrayList<>();
 
                             System.out.println("RUNNER UUID: " + runnerUUID);
                             System.out.println("HUNTER UUIDS: " + hunterUUIDs);
+                            System.out.println("GUI DEBUG: Spectator UUIDs: " + spectatorsUUIDs);
 
-                            java.util.List<java.util.UUID> spectatorsUUIDs = new java.util.ArrayList<>();
 
                             for(String name : selectedspectators){
                                 var player = this.minecraft.player.connection.getOnlinePlayers().stream()
@@ -397,9 +398,18 @@ int visiblePlayers = Math.max(1,(scrollBottom - scrollTop) /22);
                                         .findFirst()
                                         .orElse(null);
 
-                                if(player!=null){
-                                    spectatorsUUIDs.add(player.getProfile().id());
-                                }
+
+
+                                    if (player != null) {
+                                        spectatorsUUIDs.add(player.getProfile().id());
+
+                                        System.out.println("GUI DEBUG: Spectator selected: "
+                                                + name + " UUID: " + player.getProfile().id());
+                                    } else {
+                                        System.out.println("GUI DEBUG: Player not found: " + name);
+                                    }
+
+
                             }
 
                             if (selectedrunner == null && selectedhunters.isEmpty() && selectedspectators.isEmpty()) {
