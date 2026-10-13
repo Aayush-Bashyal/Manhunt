@@ -221,6 +221,13 @@ return 1;
                                                         return 0;
                                                     }
 
+                                                    if(game.isRunning()){
+                                                        context.getSource().sendFailure(
+                                                                Component.literal("Roles are locked while Manhunt is Running!").withStyle(ChatFormatting.RED)
+                                                        );
+                                                        return 0;
+                                                    }
+
                                                     ServerPlayer player = EntityArgument.getPlayer(
                                                                     context, "player"
                                                             );
@@ -262,6 +269,13 @@ return 1;
                                                         return 0;
                                                     }
 
+                                                    if(game.isRunning()){
+                                                        context.getSource().sendFailure(
+                                                                Component.literal("Roles are locked while Manhunt is Running!").withStyle(ChatFormatting.RED)
+                                                        );
+                                                        return 0;
+                                                    }
+
 
                                                     ServerPlayer player = EntityArgument.getPlayer(
                                                                     context, "player"
@@ -290,6 +304,13 @@ return 1;
 
                                             if(sourcePlayer == null || !game.isAdmin(sourcePlayer.getUUID())){
                                                 context.getSource().sendFailure(Component.literal("You are not a Manhunt Admin!"));
+                                                return 0;
+                                            }
+
+                                            if(game.isRunning()){
+                                                context.getSource().sendFailure(
+                                                        Component.literal("Roles are locked while Manhunt is Running").withStyle(ChatFormatting.RED)
+                                                );
                                                 return 0;
                                             }
 
@@ -332,6 +353,12 @@ return 1;
                                         return 0;
                                     }
 
+                                    if(game.isRunning()){
+                                        context.getSource().sendFailure(
+                                                Component.literal("Roles are locked while Manhunt is Running").withStyle(ChatFormatting.RED)
+                                        );
+                                        return 0;
+                                    }
 
                                     ServerPlayer player = EntityArgument.getPlayer(context,"player");
                                    if (game.getRunner() !=null && game.getRunner().equals(player.getUUID())){

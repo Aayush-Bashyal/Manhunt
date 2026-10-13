@@ -101,6 +101,34 @@ public class Manhunt implements ModInitializer {
 						return;
 					}
 
+					if(game.isRunning()){
+						//runner cannot be changed when the manhunt starts
+
+						if(!java.util.Objects.equals(payload.runner(),game.getRunner())){
+							return;
+						}
+
+						// hunters
+						if(!new java.util.HashSet<>(payload.hunters()).equals(new java.util.HashSet<>(game.getHunters()))){
+							return;
+						}
+
+						//spectators cannot be removed
+						if(!payload.spectators().containsAll(game.getSpectators())){
+							return;
+						}
+
+						//only players with no role cn be spectators after the manhunt starts
+						for(UUID spectatorsID:payload.spectators()){
+							boolean alreadyHasRole= spectatorsID.equals(game.getRunner())||game.getHunters().contains(spectatorsID)|| game.getSpectators().contains(spectatorsID);
+
+							if(!alreadyHasRole){
+								game.addSpectator(spectatorsID);
+							}
+						}
+						return;
+					}
+
 
 
 					game.setRunner(payload.runner());
