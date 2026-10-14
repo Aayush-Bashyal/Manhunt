@@ -2,6 +2,7 @@ package net.bikash.manhunt;
 
 import net.bikash.manhunt.client.ManhuntClientNetwork;
 import net.bikash.manhunt.client.ManhuntCompassRenderer;
+import net.bikash.manhunt.client.ManhuntSpectatorHUD;
 import net.bikash.manhunt.client.ManhuntSpectatorManager;
 import net.bikash.manhunt.gui.ManhuntStartScreen;
 import net.bikash.manhunt.hud.ManhuntHUD;
@@ -21,6 +22,7 @@ private static boolean opened = false;
 
     public void onInitializeClient(){
         ManhuntHUD.register();
+        ManhuntSpectatorHUD.register();
         ManhuntClientNetwork.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client-> {

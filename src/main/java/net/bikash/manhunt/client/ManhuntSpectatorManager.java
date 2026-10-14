@@ -54,4 +54,9 @@ currentTargetIndex = (currentTargetIndex + 1)% targets.size();
             minecraft.setCameraEntity(target);
         }
     }
+
+    public static boolean hasTargets() {
+        return !targets.isEmpty();
+    }
+
 }
