@@ -1,5 +1,6 @@
 package net.bikash.manhunt.client;
 
+import net.bikash.manhunt.Manhunt;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.Minecraft;
@@ -33,7 +34,29 @@ if(leftMouseDown&&!wasLeftMouseDown){
 
     double mouseY = client.mouseHandler.ypos() * client.getWindow().getGuiScaledHeight() / client.getWindow().getHeight();
 
-    // ....................
+   int width = client.getWindow().getGuiScaledWidth();
+   int height = client.getWindow().getGuiScaledHeight();
+
+   int buttonWidth = 90;
+   int buttonHeight = 22;
+   int gap=6;
+   int margin = 10;
+
+   int nextX = width-margin-buttonWidth;
+   int previousX = nextX - gap - buttonWidth;
+   int buttonY = height - margin - buttonHeight;
+
+   if(ManhuntSpectatorManager.hasTargets() && mouseY>= buttonY && mouseY < buttonY+buttonHeight){
+
+       if(mouseX>=previousX && mouseX<previousX+buttonWidth){
+           ManhuntSpectatorManager.previousTarget();;
+           ManhuntSpectatorManager.updateCamera();
+       } else if(mouseX>=nextX && mouseX<nextX+buttonWidth)  {
+           ManhuntSpectatorManager.nextTarget();
+           ManhuntSpectatorManager.updateCamera();
+
+       }
+   }
 
 }
 wasLeftMouseDown = leftMouseDown;
@@ -51,9 +74,7 @@ wasLeftMouseDown = leftMouseDown;
 
             return;
         }
-        if (!ManhuntSpectatorManager.hasTargets()) {
-            return;
-        }
+
 
         int width = mc.getWindow().getGuiScaledWidth();
         int height = mc.getWindow().getGuiScaledHeight();

@@ -43,7 +43,7 @@ private static boolean opened = false;
         KeyMapping nextTargetKey = KeyMappingHelper.registerKeyMapping(
                 new KeyMapping(
                 "key.manhunt.spectator_next",
-                GLFW.GLFW_KEY_RIGHT_BRACKET,
+                GLFW.GLFW_KEY_RIGHT,
                 category
                 )
         );
@@ -52,7 +52,7 @@ private static boolean opened = false;
 
                 new KeyMapping(
                 "key.manhunt.spectator_previous",
-                GLFW.GLFW_KEY_LEFT_BRACKET,
+                GLFW.GLFW_KEY_LEFT,
                 category
                 )
                 );
