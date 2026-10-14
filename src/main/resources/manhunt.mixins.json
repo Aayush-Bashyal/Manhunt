@@ -5,7 +5,8 @@
 	"mixins": [
 		"PlayerInventoryMixin",
 		"ScreenAccessor",
-		"ManhuntPauseScreenMixin"
+		"ManhuntPauseScreenMixin",
+		"NetherPortalBlockMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -263,6 +263,8 @@ public class Manhunt implements ModInitializer {
 						ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorUUID);
 
 						if(spectator != null){
+							spectator.setGameMode(GameType.SPECTATOR);
+
 							ServerPlayNetworking.send(spectator,targetsPayload);
 						}
 					}

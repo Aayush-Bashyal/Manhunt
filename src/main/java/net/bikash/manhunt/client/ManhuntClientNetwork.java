@@ -52,6 +52,11 @@ public class ManhuntClientNetwork {
                 ManhuntSpectatorTargetsPayload.TYPE,((payload, context) -> {
                     context.client().execute(()->{
                         ManhuntSpectatorManager.setTargets(payload.targets());
+
+                        boolean spectator = context.client().player != null && context.client().player.isSpectator();
+
+                        ManhuntSpectatorManager.setSpectatorMode(spectator);
+
                         ManhuntSpectatorManager.updateCamera();
                     });
                 })

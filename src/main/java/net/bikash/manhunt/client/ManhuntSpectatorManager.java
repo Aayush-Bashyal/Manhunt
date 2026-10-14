@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ManhuntSpectatorManager {
-
+    private static boolean spectatorMode = false;
     private static final List<UUID> targets = new ArrayList<>();
     private static int currentTargetIndex = 0;
 
@@ -17,14 +17,7 @@ public class ManhuntSpectatorManager {
         targets.addAll(playerUUIDs);
         currentTargetIndex = 0;
 
-        Minecraft minecraft = Minecraft.getInstance();
 
-        if(targets.isEmpty()){
-            if(minecraft.player != null){
-                minecraft.setCameraEntity(minecraft.player);
-            }
-            return;
-        }
         updateCamera();
     }
 
@@ -33,6 +26,7 @@ public class ManhuntSpectatorManager {
             return;
         }
 currentTargetIndex = (currentTargetIndex + 1)% targets.size();
+        updateCamera();
 
     }
 
@@ -43,6 +37,7 @@ currentTargetIndex = (currentTargetIndex + 1)% targets.size();
         }
 
         currentTargetIndex = (currentTargetIndex-1 + targets.size()) % targets.size();
+        updateCamera();
     }
 
     public static void updateCamera(){
@@ -69,4 +64,11 @@ currentTargetIndex = (currentTargetIndex + 1)% targets.size();
         return !targets.isEmpty();
     }
 
+    public static void setSpectatorMode(boolean value){
+        spectatorMode = value;
+    }
+
+    public static boolean isSpectatorMode() {
+        return spectatorMode;
+    }
 }

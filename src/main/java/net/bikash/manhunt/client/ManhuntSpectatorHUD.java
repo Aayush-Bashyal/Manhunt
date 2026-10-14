@@ -46,14 +46,14 @@ if(leftMouseDown&&!wasLeftMouseDown){
    int previousX = nextX - gap - buttonWidth;
    int buttonY = height - margin - buttonHeight;
 
-   if(ManhuntSpectatorManager.hasTargets() && mouseY>= buttonY && mouseY < buttonY+buttonHeight){
+   if(ManhuntSpectatorManager.isSpectatorMode()  && ManhuntSpectatorManager.hasTargets() && mouseY>= buttonY && mouseY < buttonY+buttonHeight){
 
        if(mouseX>=previousX && mouseX<previousX+buttonWidth){
            ManhuntSpectatorManager.previousTarget();;
-           ManhuntSpectatorManager.updateCamera();
+
        } else if(mouseX>=nextX && mouseX<nextX+buttonWidth)  {
            ManhuntSpectatorManager.nextTarget();
-           ManhuntSpectatorManager.updateCamera();
+
 
        }
    }
@@ -70,7 +70,7 @@ wasLeftMouseDown = leftMouseDown;
     ) {
         Minecraft mc = Minecraft.getInstance();
 
-        if (mc.player == null || mc.level == null || !ManhuntSpectatorManager.hasTargets()) {
+        if (mc.player == null || mc.level == null || !ManhuntSpectatorManager.isSpectatorMode()) {
 
             return;
         }

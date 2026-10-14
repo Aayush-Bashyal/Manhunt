@@ -14,7 +14,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.item.ItemStack;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.bikash.manhunt.network.ManhuntNetwork;
-
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 public class ManhuntTracker {
     private static boolean hasPreviousRunnerPosition = false;
 
@@ -221,6 +221,10 @@ return;
 
 
         });
+
+
+
+
         ServerEntityLevelChangeEvents.AFTER_PLAYER_CHANGE_LEVEL.register(
                 (player, origin, destination)->{
                     if(destination.getServer()==null){
