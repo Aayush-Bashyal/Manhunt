@@ -62,7 +62,7 @@ if(leftMouseDown&&!wasLeftMouseDown){
 wasLeftMouseDown = leftMouseDown;
                 }
         );
-    }
+    } 
 
     private static void render(
             GuiGraphicsExtractor graphics,

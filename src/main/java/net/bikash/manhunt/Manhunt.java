@@ -16,6 +16,7 @@ import net.minecraft.resources.Identifier;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,56 +119,87 @@ public class Manhunt implements ModInitializer {
 							return;
 						}
 
-						//removed spectatators are no longer selected as spectators
 
-						if(!payload.spectators().containsAll(game.getSpectators())){
-							return;
-						}
 
-						//only players with no role cn be spectators after the manhunt starts
-						for(UUID spectatorsID:payload.spectators()){
-							boolean alreadyHasRole= spectatorsID.equals(game.getRunner())||game.getHunters().contains(spectatorsID)|| game.getSpectators().contains(spectatorsID);
+						List<UUID> previousSpectators =
+								new ArrayList<>(game.getSpectators());
 
-							if(!alreadyHasRole){
-								game.addSpectator(spectatorsID);
+						List<UUID> desiredSpectators = new ArrayList<>();
+
+						for (UUID id : new java.util.LinkedHashSet<>(payload.spectators())) {
+							if (!id.equals(game.getRunner())
+									&& !game.getHunters().contains(id)) {
+								desiredSpectators.add(id);
 							}
 						}
+
+// Remove players who lost the spectator role
+						for (UUID oldId : previousSpectators) {
+							if (!desiredSpectators.contains(oldId)) {
+								game.removeSpectator(oldId);
+
+								ServerPlayer oldPlayer =
+										server.getPlayerList().getPlayer(oldId);
+
+								if (oldPlayer != null) {
+									oldPlayer.setGameMode(GameType.SURVIVAL);
+									ServerPlayNetworking.send(
+											oldPlayer,
+											new ManhuntSpectatorTargetsPayload(new ArrayList<>())
+									);
+								}
+							}
+						}
+
+// Add/update selected spectators
+						for (UUID id : desiredSpectators) {
+							if (!game.getSpectators().contains(id)) {
+								game.addSpectator(id);
+							}
+
+							ServerPlayer spectator =
+									server.getPlayerList().getPlayer(id);
+
+							if (spectator != null) {
+								spectator.setGameMode(GameType.SPECTATOR);
+							}
+						}
+
+
+						//build pov targets : runner and hunters
+
 						List<UUID> targets = new ArrayList<>();
 
-								if (game.getRunner()!=null){
+						if(game.getRunner()!=null){
 							targets.add(game.getRunner());
 						}
 
-								targets.addAll(game.getHunters());
+						targets.addAll(game.getHunters());
 
-								ManhuntSpectatorTargetsPayload targetsPayload = new ManhuntSpectatorTargetsPayload(targets);
+						ManhuntSpectatorTargetsPayload targetsPayload = new ManhuntSpectatorTargetsPayload(targets);
 
-								for(UUID spectatorsUUID : game.getSpectators()){
-									ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorsUUID);
+						//send the updated targets to current spectators
+						for(UUID spectatorUUID : game.getSpectators()){
+							ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorUUID	);
 
-									System.out.println("DEBUG: Checking spectator: " + spectatorsUUID);
+							if(spectator!=null){
+								ServerPlayNetworking.send(spectator,targetsPayload);
+							}
+						}
 
-									System.out.println("DEBUG: Player found: " + (spectator != null));
-
-									if(spectator != null){
-										spectator.setGameMode(
-												net.minecraft.world.level.GameType.SPECTATOR
-										);
-
-										System.out.println("DEBUG: Switched " + spectator.getName().getString() + " to Spectator Mode");
-
-										ServerPlayNetworking.send(spectator,targetsPayload)
-										;
-									}
-								}
-								return;
-
-
-
+						ServerPlayNetworking.send(
+								player,
+								new ManhuntCurrentRolesPayload(
+										game.getRunner(),
+										new ArrayList<>(game.getHunters()),
+										new ArrayList<>(game.getSpectators())
+								)
+						);
+						return;
 					}
 
 
-
+					List<UUID> previousSpectators = new ArrayList<>(game.getSpectators());
 					game.setRunner(payload.runner());
 					game.clearHunters();
 
@@ -175,19 +207,24 @@ public class Manhunt implements ModInitializer {
 						game.addHunter(hunter);
 					}
 
-					List<UUID> previousSpectators = new ArrayList<>(game.getSpectators());
+
 
 					game.clearSpectators();
-					for(UUID spectatorID : new java.util.LinkedHashSet<>(payload.spectators())) {
-						game.addSpectator(spectatorID);
 
+					for(UUID id : new java.util.LinkedHashSet<>(payload.spectators())){
+						if(!id.equals(game.getRunner()) && !game.getHunters().contains(id)){
+							game.addSpectator(id);
+						}
 					}
 
-					for(UUID oldSpectator : previousSpectators){
-						if(!game.getSpectators().contains(oldSpectator)){
-							ServerPlayer oldPlayer = server.getPlayerList().getPlayer(oldSpectator);
+					//reset players who lost spectators role
 
-							if(oldPlayer != null){
+					for(UUID oldId : previousSpectators){
+						if(!game.getSpectators().contains(oldId)){
+							ServerPlayer oldPlayer = server.getPlayerList().getPlayer(oldId);
+
+							if(oldPlayer !=null){
+								oldPlayer.setGameMode(GameType.SURVIVAL);
 								ServerPlayNetworking.send(
 										oldPlayer,
 										new ManhuntSpectatorTargetsPayload(new ArrayList<>())
@@ -196,16 +233,16 @@ public class Manhunt implements ModInitializer {
 						}
 					}
 
-						for(ServerPlayer onlinePlayer : server.getPlayerList().getPlayers()){
-							UUID id = onlinePlayer.getUUID();
+					//apply spectator mode to every selected spectator
 
-							if(game.getSpectators().contains(id)){
-								onlinePlayer.setGameMode(GameType.SPECTATOR);
-							}
-							else{
-								onlinePlayer.setGameMode(GameType.SURVIVAL);
-							}
+					for(UUID id: game.getSpectators() ){
+						ServerPlayer spectator = server.getPlayerList().getPlayer(id);
+
+						if(spectator != null){
+
+							spectator.setGameMode(GameType.SPECTATOR);
 						}
+					}
 
 
 
