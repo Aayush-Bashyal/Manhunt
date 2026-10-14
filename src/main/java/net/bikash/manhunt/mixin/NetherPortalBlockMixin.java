@@ -11,8 +11,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.NetherPortalBlock;
 import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -24,13 +26,19 @@ import java.util.UUID;
 @Mixin(NetherPortalBlock.class)
 public class NetherPortalBlockMixin {
 
-    private static BlockPos manhunt$allowedNetherPortal;
-    private static java.util.UUID manhunt$trackedRunner;
+
+
+
+    @Unique
+    private static UUID manhunt$trackedRunner;
+
+    @Unique
+    private static Vec3 manhunt$allowedNetherPosition;
 
     @Inject(
             method = "getPortalDestination",
-            at = @At("RETURN")
-
+            at = @At("RETURN"),
+            cancellable = true
     )
     private void manhunt$checkPortal(
             ServerLevel currentLevel,
@@ -42,42 +50,61 @@ public class NetherPortalBlockMixin {
         if(!(entity instanceof ServerPlayer player)){
             return;
         }
-        if(currentLevel.dimension() != Level.OVERWORLD) {
+
+        if(currentLevel.getServer() == null){
             return;
         }
-        if(cir.getReturnValue() == null){
-            return;
-        }
+
+
 
         ManhuntGame game = Manhunt.getGame(currentLevel.getServer());
 
         if(!game.isRunning() || game.getRunner() == null){
             return;
         }
-        if(!player.getUUID().equals(game.getRunner())){
+
+      UUID runnerId = player.getUUID();
+
+        if(!runnerId.equals(game.getRunner())){
             return;
         }
-      UUID runnerId = player.getUUID();
+
+        TeleportTransition transition = cir.getReturnValue();
+
+        if(transition == null){
+            return;
+        }
+
+
 
 
         //runer enters the nether forn the overworld
         if(currentLevel.dimension() == Level.OVERWORLD){
             manhunt$trackedRunner = runnerId;
-            manhunt$allowedNetherPortal  = portalEntryPos.immutable();
+            manhunt$allowedNetherPosition  = transition.position();
             return;
         }
 
         //when runner attempts to retuen form the nether.
 
-        if(currentLevel.dimension() == Level.NETHER && runnerId.equals(manhunt$trackedRunner) && manhunt$allowedNetherPortal!= null){
-            if(!manhunt$allowedNetherPortal.equals(portalEntryPos)){
+        if(currentLevel.dimension() == Level.NETHER && runnerId.equals(manhunt$trackedRunner) && manhunt$allowedNetherPosition!= null){
+
+                BlockPos allowedPortal = BlockPos.containing(
+                        manhunt$allowedNetherPosition.x(),
+                        manhunt$allowedNetherPosition.y(),
+                        manhunt$allowedNetherPosition.z()
+                );
+                if(portalEntryPos.distSqr(allowedPortal)>64.0){
+                    cir.setReturnValue(null);
+                }
+
                 player.sendSystemMessage(
                         Component.literal(
                                 "You cannot use another portal! Use the same portal to return."
-                        ).withColor(0xFF0000),
-                        true
+                        ).withStyle(ChatFormatting.RED)
+
                 );
-            }
+
         }
 
 }}
