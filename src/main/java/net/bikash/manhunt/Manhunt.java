@@ -108,6 +108,7 @@ public class Manhunt implements ModInitializer {
 					}
 
 					if(game.isRunning()){
+
 						//runner cannot be changed when the manhunt starts
 
 						if(!java.util.Objects.equals(payload.runner(),game.getRunner())){
@@ -142,11 +143,15 @@ public class Manhunt implements ModInitializer {
 										server.getPlayerList().getPlayer(oldId);
 
 								if (oldPlayer != null) {
-									oldPlayer.setGameMode(GameType.SURVIVAL);
+                                    // Restore the player's own camera and disable spectator POV
+
 									ServerPlayNetworking.send(
 											oldPlayer,
 											new ManhuntSpectatorTargetsPayload(new ArrayList<>())
 									);
+                                    if(!oldId.equals(game.getRunner())&& !game.getHunters().contains(oldId)){
+                                        oldPlayer.setGameMode(GameType.SURVIVAL);
+                                    }
 								}
 							}
 						}
@@ -224,11 +229,16 @@ public class Manhunt implements ModInitializer {
 							ServerPlayer oldPlayer = server.getPlayerList().getPlayer(oldId);
 
 							if(oldPlayer !=null){
-								oldPlayer.setGameMode(GameType.SURVIVAL);
+                                //clear spec pov first
+
 								ServerPlayNetworking.send(
 										oldPlayer,
 										new ManhuntSpectatorTargetsPayload(new ArrayList<>())
 								);
+                                // keep the game mode consistent withthe newly assignd role
+                                if(!oldId.equals(game.getRunner())&& !game.getHunters().contains(oldId)){
+                                    oldPlayer.setGameMode(GameType.SURVIVAL);
+                                }
 							}
 						}
 					}

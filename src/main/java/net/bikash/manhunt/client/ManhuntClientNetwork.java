@@ -53,11 +53,13 @@ public class ManhuntClientNetwork {
                     context.client().execute(()->{
                         ManhuntSpectatorManager.setTargets(payload.targets());
 
-                        boolean spectator = context.client().player != null && context.client().player.isSpectator();
+                    if(payload.targets().isEmpty()){
+                        ManhuntSpectatorManager.setSpectatorMode(false);
 
-                        ManhuntSpectatorManager.setSpectatorMode(spectator);
-
+                    }else{
+                        ManhuntSpectatorManager.setSpectatorMode(true);
                         ManhuntSpectatorManager.updateCamera();
+                    }
                     });
                 })
         );

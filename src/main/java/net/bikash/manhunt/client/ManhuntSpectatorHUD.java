@@ -102,6 +102,18 @@ wasLeftMouseDown = leftMouseDown;
                 0xCC222222
         );
 
+        String targetName = ManhuntSpectatorManager.getCurrentTargetName();
+
+        graphics.text(
+                mc.font,
+                "Watching: "+targetName,
+                width/2-mc.font.width("Watching: "+targetName)/2,
+                y-20,
+                0xFFFFFFFF,
+                true
+        );
+
+
         graphics.text(
                 mc.font,
                 "< PREVIOUS",

@@ -194,7 +194,7 @@ public class ManhuntCommands {
                                     ),
                             false
                     );
-                    context.getSource().sendSuccess(a
+                    context.getSource().sendSuccess(
                             ()-> Component.literal("Hunters: ")
                                     .append(
                                             Component.literal(hunters.toString())
