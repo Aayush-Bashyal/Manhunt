@@ -118,7 +118,8 @@ public class Manhunt implements ModInitializer {
 							return;
 						}
 
-						//spectators cannot be removed
+						//removed spectatators are no longer selected as spectators
+
 						if(!payload.spectators().containsAll(game.getSpectators())){
 							return;
 						}
@@ -170,34 +171,31 @@ public class Manhunt implements ModInitializer {
 					game.setRunner(payload.runner());
 					game.clearHunters();
 
-					for (var hunter : payload.hunters()){
+					for (UUID hunter : new java.util.LinkedHashSet<>(payload.hunters())){
 						game.addHunter(hunter);
-
-						System.out.println("ROLES SAVED!");
 					}
 
 					game.clearSpectators();
-					for(UUID spectatorID : new java.util.LinkedHashSet<>(payload.spectators())){
+					for(UUID spectatorID : new java.util.LinkedHashSet<>(payload.spectators())) {
 						game.addSpectator(spectatorID);
-
-						ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorID);
-
-						if(spectator!= null){
-							spectator.setGameMode(   net.minecraft.world.level.GameType.SPECTATOR);
-
-							System.out.println("SPETATOR MODE SET: " + spectator.getName().getString());
-						}else{
-							System.out.println("SPECTATORS NOT ONLINE: "+ spectatorID);
-						}
 
 					}
 
-					System.out.println("DEBUG: Received spectators: "
-							+ payload.spectators());
+						for(ServerPlayer onlinePlayer : server.getPlayerList().getPlayers()){
+							UUID id = onlinePlayer.getUUID();
 
-					System.out.println("RUNNER: " +payload.runner());
+							if(game.getSpectators().contains(id)){
+								onlinePlayer.setGameMode(GameType.SPECTATOR);
+							}
+							else{
+								onlinePlayer.setGameMode(GameType.SURVIVAL);
+							}
+						}
 
-					System.out.println("HUNTERS: "+payload.hunters());
+
+
+
+
 
 					List<UUID> targets = new ArrayList<>();
 

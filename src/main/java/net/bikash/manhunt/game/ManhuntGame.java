@@ -17,7 +17,6 @@ public class ManhuntGame {
     private int spawnChunkZ;
     private boolean spawnChunkSet = false;
 
-
     public boolean isRunning(){
         return running;
     }
@@ -33,6 +32,8 @@ if(runner ==null || hunters.isEmpty()){
         running = true;
         startTime  = System.currentTimeMillis();
     }
+
+
 
     public long getElapsedTime(){
         if(!running){
@@ -73,6 +74,9 @@ public List<UUID> getSpectators(){
         spectators.clear();
     }
 
+    public boolean removeSpectator(UUID spectator){
+        return spectators.remove(spectator);
+    }
 
 public void clearHunters(){
         hunters.clear();
