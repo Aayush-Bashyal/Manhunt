@@ -70,7 +70,7 @@ wasLeftMouseDown = leftMouseDown;
     ) {
         Minecraft mc = Minecraft.getInstance();
 
-        if (mc.player == null || mc.level == null) {
+        if (mc.player == null || mc.level == null || !ManhuntSpectatorManager.hasTargets()) {
 
             return;
         }

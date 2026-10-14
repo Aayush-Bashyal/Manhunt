@@ -16,6 +16,16 @@ public class ManhuntSpectatorManager {
         targets.clear();
         targets.addAll(playerUUIDs);
         currentTargetIndex = 0;
+
+        Minecraft minecraft = Minecraft.getInstance();
+
+        if(targets.isEmpty()){
+            if(minecraft.player != null){
+                minecraft.setCameraEntity(minecraft.player);
+            }
+            return;
+        }
+        updateCamera();
     }
 
     public static void nextTarget(){

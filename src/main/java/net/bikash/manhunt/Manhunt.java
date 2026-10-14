@@ -175,10 +175,25 @@ public class Manhunt implements ModInitializer {
 						game.addHunter(hunter);
 					}
 
+					List<UUID> previousSpectators = new ArrayList<>(game.getSpectators());
+
 					game.clearSpectators();
 					for(UUID spectatorID : new java.util.LinkedHashSet<>(payload.spectators())) {
 						game.addSpectator(spectatorID);
 
+					}
+
+					for(UUID oldSpectator : previousSpectators){
+						if(!game.getSpectators().contains(oldSpectator)){
+							ServerPlayer oldPlayer = server.getPlayerList().getPlayer(oldSpectator);
+
+							if(oldPlayer != null){
+								ServerPlayNetworking.send(
+										oldPlayer,
+										new ManhuntSpectatorTargetsPayload(new ArrayList<>())
+								);
+							}
+						}
 					}
 
 						for(ServerPlayer onlinePlayer : server.getPlayerList().getPlayers()){
