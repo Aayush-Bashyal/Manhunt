@@ -150,6 +150,22 @@ public class ManhuntCommands {
                             );
                         }
                     }
+
+                    final StringBuilder spectators = new StringBuilder();
+
+                    for (var spectatorsUUID : game.getSpectators()){
+                        var spectator = context.getSource()
+                                .getServer().getPlayerList().getPlayer(spectatorsUUID);
+
+                        if(spectator != null)
+                        {
+                            if(spectators.length()>0){
+                                spectators.append(", ");
+                            }
+                            spectators.append(spectator.getName().getString());
+                        }
+                    }
+
                     if(hunters.length()==0){
                         hunters.append("None");
                     }
@@ -178,12 +194,19 @@ public class ManhuntCommands {
                                     ),
                             false
                     );
-                    context.getSource().sendSuccess(
+                    context.getSource().sendSuccess(a
                             ()-> Component.literal("Hunters: ")
                                     .append(
                                             Component.literal(hunters.toString())
                                                     .withStyle(ChatFormatting.YELLOW)
                                     ),
+                            false
+                    );
+
+                    context.getSource().sendSuccess(
+                            ()-> Component.literal("Spectators: ").append(
+                                    Component.literal(spectators.toString()).withStyle(ChatFormatting.YELLOW)
+                            ),
                             false
                     );
 
