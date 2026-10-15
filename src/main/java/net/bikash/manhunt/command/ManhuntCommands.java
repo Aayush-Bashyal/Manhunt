@@ -56,6 +56,7 @@ public class ManhuntCommands {
                         context.getSource().sendFailure(
                                 Component.literal("Please select a Runner and at least one Hunter to start the Manhunt ! ")
                         );
+                        return 0;
                     }
 
 

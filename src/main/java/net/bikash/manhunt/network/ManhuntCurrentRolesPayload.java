@@ -62,7 +62,7 @@ public record ManhuntCurrentRolesPayload (
                     }
             );
     @Override
-            public Type<? extends CustomPacketPayload> type(){
+            public CustomPacketPayload.Type<? extends CustomPacketPayload> type(){
         return TYPE;
         }
     }

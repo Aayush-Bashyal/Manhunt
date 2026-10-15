@@ -25,11 +25,11 @@ public class ManhuntSpectatorHUD {
                     }
 
                     boolean leftMouseDown = GLFW.glfwGetMouseButton(
-                            org.lwjgl.glfw.GLFW.glfwGetCurrentContext(),
+                            GLFW.glfwGetCurrentContext(),
                             GLFW.GLFW_MOUSE_BUTTON_LEFT
                     )==GLFW.GLFW_PRESS;
 
-if(leftMouseDown&&!wasLeftMouseDown){
+if(leftMouseDown && !wasLeftMouseDown && canShowControls()){
     double mouseX = client.mouseHandler.xpos() * client.getWindow().getGuiScaledWidth() / client.getWindow().getWidth();
 
     double mouseY = client.mouseHandler.ypos() * client.getWindow().getGuiScaledHeight() / client.getWindow().getHeight();
@@ -46,23 +46,26 @@ if(leftMouseDown&&!wasLeftMouseDown){
    int previousX = nextX - gap - buttonWidth;
    int buttonY = height - margin - buttonHeight;
 
-   if(ManhuntSpectatorManager.isSpectatorMode()  && ManhuntSpectatorManager.hasTargets() && mouseY>= buttonY && mouseY < buttonY+buttonHeight){
+   boolean insideButtonRow = mouseX >= buttonY && mouseY < buttonY + buttonHeight;
 
-       if(mouseX>=previousX && mouseX<previousX+buttonWidth){
-           ManhuntSpectatorManager.previousTarget();;
-
-       } else if(mouseX>=nextX && mouseX<nextX+buttonWidth)  {
-           ManhuntSpectatorManager.nextTarget();
-
-
-       }
+   if(insideButtonRow && mouseX >= previousX && mouseX < previousX + buttonWidth){
+       ManhuntSpectatorManager.previousTarget();;
    }
+   else if (insideButtonRow && mouseX >= nextX && mouseX < nextX + buttonWidth){
+       ManhuntSpectatorManager.nextTarget();
+   }
+
+
 
 }
 wasLeftMouseDown = leftMouseDown;
                 }
         );
-    } 
+    }
+
+    private static  boolean canShowControls(){
+        return ManhuntSpectatorManager.isSpectatorMode() && ManhuntSpectatorManager.hasTargets();
+    }
 
     private static void render(
             GuiGraphicsExtractor graphics,
@@ -70,7 +73,7 @@ wasLeftMouseDown = leftMouseDown;
     ) {
         Minecraft mc = Minecraft.getInstance();
 
-        if (mc.player == null || mc.level == null || !ManhuntSpectatorManager.isSpectatorMode()) {
+        if (mc.player == null || mc.level == null || !canShowControls()) {
 
             return;
         }
@@ -102,12 +105,12 @@ wasLeftMouseDown = leftMouseDown;
                 0xCC222222
         );
 
-        String targetName = ManhuntSpectatorManager.getCurrentTargetName();
+        String targetName = "Watching: "+ManhuntSpectatorManager.getCurrentTargetName();
 
         graphics.text(
                 mc.font,
-                "Watching: "+targetName,
-                width/2-mc.font.width("Watching: "+targetName)/2,
+                targetName,
+                width/2-mc.font.width(targetName)/2,
                 y-20,
                 0xFFFFFFFF,
                 true

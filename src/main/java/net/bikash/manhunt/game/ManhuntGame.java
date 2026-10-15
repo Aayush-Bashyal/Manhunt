@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class ManhuntGame {
     private boolean running = false;
+    private boolean startRequested = false;
     private UUID runner;
     private final List<UUID> hunters = new ArrayList<>();
     private final List<UUID> spectators = new ArrayList<>();
@@ -20,6 +21,11 @@ public class ManhuntGame {
     public boolean isRunning(){
         return running;
     }
+
+    public boolean isStartRequested(){
+        return startRequested;
+    }
+
     public void start(){
 
         if (running) {

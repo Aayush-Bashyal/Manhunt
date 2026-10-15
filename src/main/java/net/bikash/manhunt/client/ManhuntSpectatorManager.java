@@ -16,21 +16,23 @@ public class ManhuntSpectatorManager {
 
     public static void setTargets(List<UUID> playerUUIDs){
         targets.clear();
-        targets.addAll(playerUUIDs);
+        if(playerUUIDs != null){
+            targets.addAll(playerUUIDs);
+        }
         currentTargetIndex = 0;
 
+//do not enable spectator mode automatically
+        if(!spectatorMode||targets.isEmpty()){
 
-        if(targets.isEmpty()){
-            spectatorMode = false;
             returnToOwnPOV();
             return;
         }
-        spectatorMode = true;
+
         updateCamera();
     }
 
     public static void nextTarget(){
-        if(targets.isEmpty()){
+        if( !spectatorMode ||  targets.isEmpty()){
             return;
         }
 currentTargetIndex = (currentTargetIndex + 1)% targets.size();
@@ -39,7 +41,7 @@ currentTargetIndex = (currentTargetIndex + 1)% targets.size();
     }
 
     public static void previousTarget(){
-        if(targets.isEmpty()){
+        if( !spectatorMode ||targets.isEmpty()){
             return;
 
         }
@@ -79,34 +81,50 @@ currentTargetIndex = (currentTargetIndex + 1)% targets.size();
     public static String getCurrentTargetName(){
         Minecraft minecraft = Minecraft.getInstance();
 
-        if(minecraft.player == null || minecraft.level == null || !spectatorMode || targets.isEmpty()){
-            return minecraft.player==null ?"" : minecraft.player.getName().getString();
+        if(minecraft.player == null){
+            return "";
         }
 
-        if(currentTargetIndex <0 || currentTargetIndex >= targets.size()){
+
+
+        if(!spectatorMode || targets.isEmpty()||
+        currentTargetIndex <0 || currentTargetIndex >= targets.size()){
             return minecraft.player.getName().getString();
         }
+
+        if(minecraft.level == null){
+            return "Loading player...";
+        }
+
+
         Player target = minecraft.level.getPlayerByUUID(
                 targets.get(currentTargetIndex)
         );
+
         return target != null ? target.getName().getString() : "Loading player...";
     }
 
     public static boolean hasTargets(){
-        return !targets.isEmpty();
+
+        return spectatorMode &&  !targets.isEmpty();
     }
     public static void setSpectatorMode(boolean value){
         spectatorMode=value;
 
-        if(!value){
-            targets.clear();
-            currentTargetIndex=0;
-            returnToOwnPOV();
-        }else {
-            updateCamera();
-        }
+       if(!value){
+           currentTargetIndex = 0;
+           returnToOwnPOV();
+           return;
+       }
+       if(targets.isEmpty()){
+           returnToOwnPOV();
+           return;
+       }
+       updateCamera();
+
     }
     public static boolean isSpectatorMode() {
+
         return spectatorMode;
     }
 

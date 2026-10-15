@@ -92,6 +92,14 @@ public class Manhunt implements ModInitializer {
 
 					ServerPlayNetworking.send(player,new ManhuntAdminNetwork(isAdmin));
 
+					ManhuntCurrentRolesPayload rolesPayload = new ManhuntCurrentRolesPayload(
+							game.getRunner(),
+							new ArrayList<>(game.getHunters()),
+							new ArrayList<>(game.getSpectators())
+					);
+
+					ServerPlayNetworking.send(player,rolesPayload);
+
 					
 				}
 		);
@@ -149,9 +157,7 @@ public class Manhunt implements ModInitializer {
 											oldPlayer,
 											new ManhuntSpectatorTargetsPayload(new ArrayList<>())
 									);
-                                    if(!oldId.equals(game.getRunner())&& !game.getHunters().contains(oldId)){
-                                        oldPlayer.setGameMode(GameType.SURVIVAL);
-                                    }
+                                   oldPlayer.setGameMode(GameType.SURVIVAL);
 								}
 							}
 						}
@@ -188,18 +194,24 @@ public class Manhunt implements ModInitializer {
 							ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorUUID	);
 
 							if(spectator!=null){
+                                spectator.setGameMode(GameType.SPECTATOR);
 								ServerPlayNetworking.send(spectator,targetsPayload);
 							}
 						}
 
-						ServerPlayNetworking.send(
-								player,
-								new ManhuntCurrentRolesPayload(
-										game.getRunner(),
-										new ArrayList<>(game.getHunters()),
-										new ArrayList<>(game.getSpectators())
-								)
-						);
+
+
+
+						ManhuntCurrentRolesPayload rolesPayload = new ManhuntCurrentRolesPayload(
+                                game.getRunner(),
+                                new ArrayList<>(game.getHunters()),
+                                new ArrayList<>(game.getSpectators())
+                        );
+                        for(ServerPlayer onlinePlayer : server.getPlayerList().getPlayers()){
+                     ServerPlayNetworking.send(onlinePlayer,rolesPayload);
+                        }
+
+
 						return;
 					}
 
@@ -236,9 +248,7 @@ public class Manhunt implements ModInitializer {
 										new ManhuntSpectatorTargetsPayload(new ArrayList<>())
 								);
                                 // keep the game mode consistent withthe newly assignd role
-                                if(!oldId.equals(game.getRunner())&& !game.getHunters().contains(oldId)){
-                                    oldPlayer.setGameMode(GameType.SURVIVAL);
-                                }
+                                oldPlayer.setGameMode(GameType.SURVIVAL);
 							}
 						}
 					}
@@ -277,6 +287,18 @@ public class Manhunt implements ModInitializer {
 
 							ServerPlayNetworking.send(spectator,targetsPayload);
 						}
+					}
+
+					ManhuntCurrentRolesPayload updatedRolesPayload = new ManhuntCurrentRolesPayload(
+							game.getRunner(),
+							new ArrayList<>(game.getHunters()),
+							new ArrayList<>(game.getSpectators())
+					);
+					for(ServerPlayer onlinePlayer : server.getPlayerList().getPlayers()){
+						ServerPlayNetworking.send(
+								onlinePlayer,
+								updatedRolesPayload
+						);
 					}
 				}
 		);

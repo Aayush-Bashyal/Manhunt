@@ -53,13 +53,7 @@ public class ManhuntClientNetwork {
                     context.client().execute(()->{
                         ManhuntSpectatorManager.setTargets(payload.targets());
 
-                    if(payload.targets().isEmpty()){
-                        ManhuntSpectatorManager.setSpectatorMode(false);
 
-                    }else{
-                        ManhuntSpectatorManager.setSpectatorMode(true);
-                        ManhuntSpectatorManager.updateCamera();
-                    }
                     });
                 })
         );
@@ -68,11 +62,26 @@ public class ManhuntClientNetwork {
                 ManhuntCurrentRolesPayload.TYPE,
                 (payload,context)-> {
                     context.client().execute(()->{
+                        Minecraft mc = context.client();
+
                         ManhuntPlayerSelectScreen.updateSavedRoles(
                                 payload.runner(),
                                 payload.hunters(),
                                 payload.spectators()
                         );
+
+                        if(mc.player == null){
+                            ManhuntSpectatorManager.setSpectatorMode(false);
+                            return;
+                        }
+
+                        boolean isSpectator = payload.spectators().contains(mc.player.getUUID());
+
+                        if(isSpectator){
+                            ManhuntSpectatorManager.setSpectatorMode(true);
+                        }else{
+                            ManhuntSpectatorManager.setSpectatorMode(false);
+                        }
                     });
                 }
         );
