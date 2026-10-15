@@ -60,15 +60,14 @@ public class ManhuntCommands {
                     }
 
 
-                   game.start();
-                    if(!game.isRunning()){
-                        return 0;
-                    }
+                   game.requestStart();
+
                     context.getSource().sendSuccess(
-                            () -> Component.literal("Manhunt Started!"),
+                            () -> Component.literal(
+                                    "Manhunt start requested! Waiting for the runner to move 15 blocks away from a hunter."
+                            ),
                             false
                     );
-
 
                     for (UUID spectatorUUID : game.getSpectators()){
                         ServerPlayer spectator = context.getSource().getServer().getPlayerList().getPlayer(spectatorUUID);

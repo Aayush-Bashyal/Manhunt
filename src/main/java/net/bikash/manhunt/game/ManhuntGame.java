@@ -26,9 +26,16 @@ public class ManhuntGame {
         return startRequested;
     }
 
+    public void requestStart(){
+        if(running){
+            return;
+        }
+        startRequested = true;
+    }
+
     public void start(){
 
-        if (running) {
+        if (running || !startRequested) {
             return;
         }
 
@@ -36,6 +43,7 @@ if(runner ==null || hunters.isEmpty()){
     return;
 }
         running = true;
+startRequested = false;
         startTime  = System.currentTimeMillis();
     }
 
@@ -49,7 +57,9 @@ if(runner ==null || hunters.isEmpty()){
     }
 
     public void stop(){
+
         running=false;
+        startRequested = false;
     }
     public void setRunner(UUID runner){
         this.runner = runner;

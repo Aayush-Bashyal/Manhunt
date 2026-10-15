@@ -56,7 +56,7 @@ public class ManhuntHUD {
         long seconds = totalseconds%60;
 
         String time = String.format(
-                "TIME:%02d:%02d",
+                "%02d:%02d",
 
                 minutes,
                 seconds
@@ -64,11 +64,11 @@ public class ManhuntHUD {
 
         //panel
 
-        int panelwidth = 130;
-        int panelheight= 40;
+        int panelwidth = 150;
+        int panelheight= 44;
 
         int left = (screenwidth-panelwidth)/2;
-        int top = 5;
+        int top = 6;
         int right = left + panelwidth;
         int bottom = top +panelheight;
 
@@ -79,7 +79,7 @@ public class ManhuntHUD {
                 top,
                 right,
                 bottom,
-                0x66FFFFFF
+                0xCC101010
         );
 
         //top border
@@ -88,8 +88,8 @@ public class ManhuntHUD {
                 left,
                 top,
                 right,
-                top+2,
-                0x99FFFFFF
+                top+3,
+                0xFFFF3333
         );
 
         graphics.fill(
@@ -97,7 +97,7 @@ public class ManhuntHUD {
                 top,
                 left+1,
                 bottom,
-                0x55FFFFFF
+                0xFF555555
         );
 
         graphics.fill(
@@ -105,14 +105,14 @@ public class ManhuntHUD {
                 top,
                 right,
                 bottom,
-                0x55FFFFFF
+                0xFF555555
         );
         graphics.fill(
                 left,
                 bottom - 1,
                 right,
                 bottom,
-                0x55FFFFFF
+                0xFF555555
         );
 
         //MANHUNT title
@@ -130,6 +130,17 @@ public class ManhuntHUD {
 
         );
 
+        int lineWidth = 50 ;
+        int lineLeft = (screenwidth - lineWidth) /2;
+
+        graphics.fill(
+                lineLeft,
+                top+22,
+                lineLeft+lineWidth,
+                top+23,
+                0xFF555555
+        );
+
 
         //time
 
@@ -137,7 +148,7 @@ public class ManhuntHUD {
                 minecraft.font,
                 time,
                 screenwidth/2-minecraft.font.width(time)/2,
-                top+21,
+                top+27,
                 0xFF222222,
                 true
         );

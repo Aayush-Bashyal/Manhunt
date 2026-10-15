@@ -74,7 +74,7 @@ private static double portalZ;
 
             //making that when the runner is 15 blocks far from the runner
 
-if(!game.isRunning() && game.getRunner()!=null && !game.getHunters().isEmpty()){
+if(!game.isStartRequested() && !game.isRunning() && game.getRunner() != null && !game.getHunters().isEmpty()){
     ServerPlayer runner = server.getPlayerList().getPlayer(
             game.getRunner()
     );
@@ -163,8 +163,15 @@ if(!game.isRunning() && game.getRunner()!=null && !game.getHunters().isEmpty()){
             if (runner == null) {
                 return;
             }
+
+
             if (!runner.isAlive()) {
+                if(!game.isRunning()){
+                    return;
+                }
+
                 game.finish("Hunters");
+
                 server.getPlayerList()
                         .broadcastSystemMessage(net.minecraft.network.chat.Component.literal
                                         ("HUNTERSSS WINN!! \uD83D\uDE4C "),
