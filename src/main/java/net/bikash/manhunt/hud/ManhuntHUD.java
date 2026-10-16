@@ -124,7 +124,7 @@ public class ManhuntHUD {
                 title,
                 screenwidth/2-minecraft.font.width(title)/2,
                 top+6,
-                0xFF222222,
+                0xFFFFFFFF,
                 true
 
 
@@ -149,7 +149,7 @@ public class ManhuntHUD {
                 time,
                 screenwidth/2-minecraft.font.width(time)/2,
                 top+27,
-                0xFF222222,
+                0xFFFFFFFF,
                 true
         );
 }
