@@ -69,21 +69,24 @@ public class ManhuntCommands {
                             false
                     );
 
-                    for (UUID spectatorUUID : game.getSpectators()){
-                        ServerPlayer spectator = context.getSource().getServer().getPlayerList().getPlayer(spectatorUUID);
 
-                        if(spectator != null){
-                            spectator.setGameMode(net.minecraft.world.level.GameType.SPECTATOR);
+                    for (UUID hunterUUID : game.getHunters()) {
+                        ServerPlayer hunter = context.getSource()
+                                .getServer()
+                                .getPlayerList()
+                                .getPlayer(hunterUUID);
+
+                        if (hunter != null
+                                && !hunter.getInventory().contains(
+                                ModItems.MANHUNT_COMPASS.getDefaultInstance()
+                        )) {
+                            hunter.getInventory().add(
+                                    ModItems.MANHUNT_COMPASS.getDefaultInstance()
+                            );
                         }
                     }
 
-                    for(UUID hunterUUID: game.getHunters()){
-                        ServerPlayer hunter = context.getSource().
-                                getServer().getPlayerList().getPlayer(hunterUUID);
-                        if(hunter!=null){
-                            hunter.getInventory().add(ModItems.MANHUNT_COMPASS.getDefaultInstance());
-                        }
-                    }
+
                     return 1;
                 }))
 
@@ -420,6 +423,9 @@ return 1;
                                     ).withStyle(ChatFormatting.GOLD),
                                     false
                             );
+
+
+
                             return 1;
 
                         })
