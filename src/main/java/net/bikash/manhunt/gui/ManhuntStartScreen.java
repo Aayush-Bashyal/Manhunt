@@ -49,7 +49,7 @@ public  ManhuntStartScreen(){
     this.addRenderableWidget(Button.builder(
             Component.literal("Start Manhunt"),
             button->{
-
+                this.minecraft.setScreen(null);
             }
     ).bounds(
             x,

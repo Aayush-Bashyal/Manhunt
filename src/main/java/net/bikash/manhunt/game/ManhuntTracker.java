@@ -2,6 +2,7 @@ package net.bikash.manhunt.game;
 
 import net.bikash.manhunt.Manhunt;
 import net.bikash.manhunt.item.ModItems;
+import net.bikash.manhunt.network.ManhuntCurrentRolesPayload;
 import net.bikash.manhunt.network.ManhuntHUDNetwork;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -15,6 +16,12 @@ import net.minecraft.world.item.ItemStack;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
 import net.bikash.manhunt.network.ManhuntNetwork;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityLevelChangeEvents;
+import net.minecraft.world.level.GameType;
+import org.apache.logging.log4j.core.jmx.Server;
+
+import java.util.List;
+import java.util.UUID;
+
 public class ManhuntTracker {
     private static boolean hasPreviousRunnerPosition = false;
 
@@ -74,7 +81,7 @@ private static double portalZ;
 
             //making that when the runner is 15 blocks far from the runner
 
-if(!game.isStartRequested() && !game.isRunning() && game.getRunner() != null && !game.getHunters().isEmpty()){
+if(game.isStartRequested() && !game.isRunning() && game.getRunner() != null && !game.getHunters().isEmpty()){
     ServerPlayer runner = server.getPlayerList().getPlayer(
             game.getRunner()
     );
@@ -119,24 +126,49 @@ if(!game.isStartRequested() && !game.isRunning() && game.getRunner() != null && 
         if(farEnough){
             game.start();
 
+            if(!game.isRunning()){
+                return;
+            }
+
+            List<java.util.UUID> onlinePlayers = new java.util.ArrayList<>();
+
+            for(ServerPlayer onlinePlayer : server.getPlayerList().getPlayers()){
+                onlinePlayers.add(onlinePlayer.getUUID());
+            }
+            game.addUnassignedPlayersAsSpectators(onlinePlayers);
+
+            java.util.List<java.util.UUID> targets = new java.util.ArrayList<>();
+            targets.add(game.getRunner());
+            targets.addAll(game.getHunters());
+
+            var targetsPayload = new net.bikash.manhunt.network.ManhuntSpectatorTargetsPayload(targets);
+
+            for(java.util.UUID spectatorUUID : game.getSpectators()){
+                ServerPlayer spectator = server.getPlayerList().getPlayer(spectatorUUID);
+
+                if(spectator != null){
+                    spectator   .setGameMode(GameType.SPECTATOR);
+
+                    ServerPlayNetworking.send(spectator,targetsPayload);
+                }
+            }
+
+            ManhuntCurrentRolesPayload rolesPayload = new ManhuntCurrentRolesPayload(
+                    game.getRunner(),
+                    new java.util.ArrayList<>(game.getHunters()),
+                    new java.util.ArrayList<>(game.getSpectators())
+            );
+            for(ServerPlayer onlinePlayer : server.getPlayerList().getPlayers()){
+                ServerPlayNetworking.send(onlinePlayer,rolesPayload);
+            }
+
             server.getPlayerList().broadcastSystemMessage(
                     net.minecraft.network.chat.Component.literal(
                             "MANHUNT STARTED!!"
                     ),
                     false
             );
-            //gives the compass to the hunter afetr the start
-            for(var hunterUUID : game.getHunters()){
-                ServerPlayer hunter = server.getPlayerList().getPlayer(
-                        hunterUUID
-                );
-                if(hunter!=null){
-                    hunter.getInventory().add(
-                            ModItems.MANHUNT_COMPASS.getDefaultInstance()
-                    );
 
-                }
-            }
         }
     }
 }

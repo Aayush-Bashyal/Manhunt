@@ -83,7 +83,16 @@ public void addSpectator(UUID spectator){
         }
 }
 public List<UUID> getSpectators(){
+
         return spectators;
+    }
+
+    public void addUnassignedPlayersAsSpectators(List<UUID> onlinePlayers){
+        for(UUID player : onlinePlayers){
+            if(!player.equals(runner) && !hunters.contains(player) && !spectators.contains(player)){
+                spectators.add(player);
+            }
+        }
     }
 
     public void clearSpectators(){

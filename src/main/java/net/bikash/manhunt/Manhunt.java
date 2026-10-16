@@ -16,8 +16,7 @@ import net.minecraft.resources.Identifier;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
-import org.apache.logging.log4j.core.jmx.Server;
-import org.slf4j.ILoggerFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +98,33 @@ public class Manhunt implements ModInitializer {
 					);
 
 					ServerPlayNetworking.send(player,rolesPayload);
+
+					if(game.isRunning() && !player.getUUID().equals(game.getRunner()) && !game.getHunters().contains(player.getUUID())){
+
+						game.addSpectator(player.getUUID());
+
+						player.setGameMode(GameType.SPECTATOR);
+
+						List<UUID> targets = new ArrayList<>();
+
+						if(game.getRunner() != null){
+							targets.add(game.getRunner());
+						}
+
+						targets.addAll(game.getHunters());
+
+						ServerPlayNetworking.send(
+								player, new ManhuntSpectatorTargetsPayload(targets)
+						);
+
+						ServerPlayNetworking.send(
+								player, new ManhuntCurrentRolesPayload(
+										game.getRunner(),
+										new ArrayList<>(game.getHunters()),
+										new ArrayList<>(game.getSpectators())
+								)
+						);
+					}
 
 					
 				}

@@ -2,9 +2,6 @@ package net.bikash.manhunt.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
-
-import javax.swing.text.html.parser.Entity;
-import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
